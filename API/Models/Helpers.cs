@@ -1,11 +1,11 @@
 ﻿using System.Data.SqlClient;
 using Microsoft.Data.Sqlite;
 
-namespace RefactorThis.Models
+namespace API.Models
 {
     public class Helpers
     {
-        private const string ConnectionString = "Data Source=App_Data/products.db";
+        private const string ConnectionString = "Data Source=D:/Personal Projects/RefactorThis/API/App_Data/products.db";
 
         public static SqliteConnection NewConnection()
         {
