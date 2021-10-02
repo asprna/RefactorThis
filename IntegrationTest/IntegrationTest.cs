@@ -12,6 +12,9 @@ namespace Product.IntegrationTest
 	{
 		protected readonly HttpClient TestClient;
 
+		/// <summary>
+		/// Create Web Application Factory for Integration Unit test.
+		/// </summary>
 		public IntegrationTest()
 		{
 			var appFactory = new WebApplicationFactory<Startup>();

@@ -75,3 +75,5 @@ All models are specified in the `/Models` folder, but should conform to:
 	2. Upgraded Sqlite package to latest 5.0.10
 	3. Added missing Newtonsoft package
 	4. Refactor the Startup.cs according to .net 5 standard
+
+2. Added Integration Unit Test Suite to the project
