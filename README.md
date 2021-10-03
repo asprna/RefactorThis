@@ -78,7 +78,9 @@ All models are specified in the `/Models` folder, but should conform to:
 
 2. Added Integration Unit Test Suite to the project
 
-3. Implemented Clean Architecture Design
+3. Implemented Clean Architecture Pattern
 
 4. Added DataContext via EntityFramework - Database first model
 dotnet CLI command: dotnet ef dbcontext scaffold “Data source=../API/App_Data/products.db” Microsoft.EntityFrameworkCore.Sqlite —context DataContext —context-dir .\Persistence —output-dir ..\Domain —data-annotations —force -p .\Persistence -f
+
+5. Implemeted CQRS + Mediator patter

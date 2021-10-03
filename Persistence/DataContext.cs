@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
-namespace Persistence.Persistence
+namespace Persistence
 {
     public partial class DataContext : DbContext
     {
