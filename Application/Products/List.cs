@@ -35,7 +35,7 @@ namespace Application.Products
 
 				if (!string.IsNullOrWhiteSpace(request.Name))
 				{
-					items = await _context.Products.Where(p => p.Name.Contains(request.Name, StringComparison.OrdinalIgnoreCase)).ToListAsync();
+					items = await _context.Products.Where(p => p.Name.ToLower().Contains(request.Name.ToLower())).ToListAsync();
 				}
 				else
 				{

@@ -55,7 +55,7 @@ namespace UnitTest.API
 		}
 
 		/// <summary>
-		/// Controller should return NotFound response when it cannot find the products.
+		/// Controller should return Ok response with no products when it cannot find the products.
 		/// Endpoint: GET /products
 		/// </summary>
 		[Fact]
@@ -73,7 +73,9 @@ namespace UnitTest.API
 
 			//Assert
 			mediator.Verify(x => x.Send(It.Is<List.Query>(y => y.Name == null), It.IsAny<CancellationToken>()));
-			actionResult.Should().BeOfType<NotFoundResult>();
+			var okResult = actionResult.Should().BeOfType<OkObjectResult>().Subject;
+			var productReturned = okResult.Value.Should().BeAssignableTo<Products>().Subject;
+			productReturned.Items.Should().BeNull();
 		}
 
 		/// <summary>
@@ -100,7 +102,7 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Ok response when it finds the products by name.
-		/// Endpoint: GET /products
+		/// Endpoint: GET /products?name={name}
 		/// </summary>
 		[Fact]
 		public void Get_FilterByName_OkResponseWithProduct()
@@ -128,7 +130,7 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Ok response with no products when the invalid name provided.
-		/// Endpoint: GET /products
+		/// Endpoint: GET /products?name={name}
 		/// </summary>
 		[Fact]
 		public void Get_FilterInvalidByName_OkResponseWithNoProduct()
@@ -156,7 +158,7 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Bad Request response when the request fails.
-		/// Endpoint: GET /products
+		/// Endpoint: GET /products?name={name}
 		/// </summary>
 		[Fact]
 		public void Get_MediatorFailedWhileFilteringProductName_BadRequestResponse()
@@ -175,6 +177,53 @@ namespace UnitTest.API
 			mediator.Verify(x => x.Send(It.Is<List.Query>(y => y.Name == name), It.IsAny<CancellationToken>()));
 			var errorReturned = actionResult.Should().BeOfType<BadRequestObjectResult>().Subject;
 			errorReturned.Value.Should().Be(error);
+		}
+
+		/// <summary>
+		/// Controller should return Ok response when it finds the product by its Id.
+		/// Endpoint: GET /products/{id}
+		/// </summary>
+		[Fact]
+		public void Get_ValidId_OkResponseWithProduct()
+		{
+			//Arrange
+			var id = "8F2E9176-35EE-4F0A-AE55-83023D2DB1A3";
+			var product = SeedTestData.Products.Where(p => p.Id == Guid.Parse(id)).FirstOrDefault();
+			var result = Result<Product>.Success(product);
+
+			mediator.Setup(x => x.Send(It.Is<Details.Query>(y => y.Id == Guid.Parse(id)), It.IsAny<CancellationToken>())).ReturnsAsync(result);
+
+			//Act
+			var actionResult = sut.Get(Guid.Parse(id)).Result;
+
+			//Assert
+			mediator.Verify(x => x.Send(It.Is<Details.Query>(y => y.Id == Guid.Parse(id)), It.IsAny<CancellationToken>()));
+			var okResult = actionResult.Should().BeOfType<OkObjectResult>().Subject;
+			var productReturned = okResult.Value.Should().BeAssignableTo<Product>().Subject;
+			productReturned.Should().Be(product);
+		}
+
+		/// <summary>
+		/// Controller should return Ok response with no product when it cannot find the products by Id.
+		/// Endpoint: GET /products/{id}
+		/// </summary>
+		[Fact]
+		public void Get_InvalidId_NotFoundResponse()
+		{
+			//Arrange
+			var id = "8F2E9176-35EE-4F0A-AE55-83023D2DB133";
+			Product product = null;
+
+			var result = Result<Domain.Product>.Success(product);
+
+			mediator.Setup(x => x.Send(It.Is<Details.Query>(y => y.Id == Guid.Parse(id)), It.IsAny<CancellationToken>())).ReturnsAsync(result);
+
+			//Act
+			var actionResult = sut.Get(Guid.Parse(id)).Result;
+
+			//Assert
+			mediator.Verify(x => x.Send(It.Is<Details.Query>(y => y.Id == Guid.Parse(id)), It.IsAny<CancellationToken>()));
+			var okResult = actionResult.Should().BeOfType<NotFoundResult>().Subject;
 		}
 	}
 }

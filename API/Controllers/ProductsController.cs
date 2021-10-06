@@ -18,20 +18,17 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> Get(string name)
         { 
+            
             return HandleResult(await Mediator.Send(new List.Query { Name = name }));
         }
 
-        /*
         [HttpGet("{id}")]
-        public Product Get(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
-            var product = new Product(id);
-            if (product.IsNew)
-                throw new Exception();
-
-            return product;
+            return HandleResult(await Mediator.Send(new Details.Query { Id = id }));
         }
 
+        /*
 		[HttpPost]
         public void Post(Product product)
         {

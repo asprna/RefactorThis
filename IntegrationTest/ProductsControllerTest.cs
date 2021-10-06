@@ -20,6 +20,7 @@ namespace IntegrationTest
 	/// </summary>
 	public class ProductsControllerTest : IntegrationTest
 	{
+
 		/// <summary>
 		/// Controller should return all the product.
 		/// Endpoint: GET /products
@@ -122,7 +123,6 @@ namespace IntegrationTest
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-			result.Should().BeNull();
 		}
 
 		/// <summary>
@@ -215,12 +215,19 @@ namespace IntegrationTest
 		{
 			//Arrange
 			var expectedProduct = SeedTestData.Products.Where(x => x.Id == Guid.Parse(id)).FirstOrDefault();
-			var invalidId = "8F2E9176-35EE-4F0A-AE55-83023D2DB133";
-			expectedProduct.Id = Guid.Parse(invalidId);
+			var invalidId = Guid.Parse("8F2E9176-35EE-4F0A-AE55-83023D2DB133");
+			var productWithInvalidId = new Product
+			{
+				Id = invalidId,
+				Name = expectedProduct.Name,
+				Price = expectedProduct.Price,
+				Description = expectedProduct.Description,
+				DeliveryPrice = expectedProduct.DeliveryPrice
+			};
 			JsonContent content = JsonContent.Create(expectedProduct);
 
 			//Act
-			var response = await TestClient.PutAsync(ApiRoutes.Products.ProducIdUrl.Replace("{id}", invalidId), content);
+			var response = await TestClient.PutAsync(ApiRoutes.Products.ProducIdUrl.Replace("{id}", invalidId.ToString()), content);
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

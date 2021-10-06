@@ -17,6 +17,8 @@ namespace IntegrationTest
 	{
 		protected readonly HttpClient TestClient;
 
+		protected DataContext InMemoryIntegrationTestDB;
+
 		/// <summary>
 		/// Create Web Application Factory for Integration Unit test.
 		/// </summary>
@@ -49,7 +51,7 @@ namespace IntegrationTest
 
 								try
 								{
-									SeedTestData.InitializeDbForTests(db);
+									SeedTestData.ReinitializeDbForTests(db);
 								}
 								catch(Exception ex)
 								{

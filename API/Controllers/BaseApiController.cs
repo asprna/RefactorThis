@@ -26,9 +26,9 @@ namespace API.Controllers
 			var products = result.Value as Products;
 
 			if (result == null) return NotFound();
-			if (result.IsSuccess && products.Items != null)
+			if (result.IsSuccess && result.Value != null)
 				return Ok(result.Value);
-			if (result.IsSuccess && products.Items == null)
+			if (result.IsSuccess && result.Value == null)
 				return NotFound();
 			return BadRequest(result.Error);
 		}
