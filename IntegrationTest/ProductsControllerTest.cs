@@ -167,6 +167,84 @@ namespace IntegrationTest
 		}
 
 		/// <summary>
+		/// Controller should validate the product against validation rule - Name.
+		/// Endpoint: POST /products
+		/// </summary>
+		/// <returns></returns>
+		[Fact]
+		public async Task Post_InputValidationProductsNoName_BadRequestResponse()
+		{
+			//Arrange
+			Product product = new Product
+			{
+				Id = Guid.NewGuid(),
+				Name = "",
+				Description = "Description",
+				DeliveryPrice = 10.00M,
+				Price = 100.00M
+			};
+			JsonContent content = JsonContent.Create(product);
+
+			//Act
+			var response = await TestClient.PostAsync(ApiRoutes.Products.Post, content);
+
+			//Assert
+			response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+		}
+
+		/// <summary>
+		/// Controller should validate the product against validation rule - Id.
+		/// Endpoint: POST /products
+		/// </summary>
+		/// <returns></returns>
+		[Fact]
+		public async Task Post_InputValidationProductsNoId_BadRequestResponse()
+		{
+			//Arrange
+			Product product = new Product
+			{
+				Id = Guid.Empty,
+				Name = "Name",
+				Description = "Description",
+				DeliveryPrice = 10.00M,
+				Price = 100.00M
+			};
+			JsonContent content = JsonContent.Create(product);
+
+			//Act
+			var response = await TestClient.PostAsync(ApiRoutes.Products.Post, content);
+
+			//Assert
+			response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+		}
+
+		/// <summary>
+		/// Controller should validate the product against validation rule - Description.
+		/// Endpoint: POST /products
+		/// </summary>
+		/// <returns></returns>
+		[Fact]
+		public async Task Post_InputValidationProductsNoDescription_BadRequestResponse()
+		{
+			//Arrange
+			Product product = new Product
+			{
+				Id = Guid.NewGuid(),
+				Name = "Name",
+				Description = "",
+				DeliveryPrice = 10.00M,
+				Price = 100.00M
+			};
+			JsonContent content = JsonContent.Create(product);
+
+			//Act
+			var response = await TestClient.PostAsync(ApiRoutes.Products.Post, content);
+
+			//Assert
+			response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+		}
+
+		/// <summary>
 		/// Controller should update correct product.
 		/// Endpoint: PUT /products/{id}
 		/// </summary>

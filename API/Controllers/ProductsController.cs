@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
-using API.Models;
+//using API.Models;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain;
@@ -28,13 +28,14 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new Details.Query { Id = id }));
         }
 
-        /*
+        
 		[HttpPost]
-        public void Post(Product product)
+        public async Task<IActionResult> Post(Product product)
         {
-            product.Save();
+            return HandleResult(await Mediator.Send(new Create.Command { Product = product }));
         }
 
+        /*
         [HttpPut("{id}")]
         public void Update(Guid id, Product product)
         {
