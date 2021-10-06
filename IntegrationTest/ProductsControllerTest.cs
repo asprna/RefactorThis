@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using Product.IntegrationTest.Helper;
+using IntegrationTest.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,29 +7,19 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Net.Http;
 using Newtonsoft.Json;
-using model = API.Models;
+//using model = API.Models;
 using Xunit;
-using API.Models;
+//using API.Models;
 using System.Net.Http.Json;
+using Domain;
 
-namespace Product.IntegrationTest
+namespace IntegrationTest
 {
 	/// <summary>
 	/// Product Controller Integration Test Class.
 	/// </summary>
 	public class ProductsControllerTest : IntegrationTest
 	{
-		List<model.Product> _testProducts;
-
-		public ProductsControllerTest()
-		{
-			_testProducts = new List<model.Product>
-			{
-				new model.Product {Id = Guid.Parse("8F2E9176-35EE-4F0A-AE55-83023D2DB1A3"), Name = "Samsung Galaxy S7", Price = 1024.99M, DeliveryPrice = 16.99M, Description = "Newest mobile product from Samsung." },
-				new model.Product {Id = Guid.Parse("DE1287C0-4B15-4A7B-9D8A-DD21B3CAFEC3"), Name = "Apple iPhone 6S", Price = 1299.99M, DeliveryPrice = 15.99M, Description = "Newest mobile product from Apple." },
-			};
-		}
-
 		/// <summary>
 		/// Controller should return all the product.
 		/// Endpoint: GET /products
@@ -39,6 +29,7 @@ namespace Product.IntegrationTest
 		public async Task Get_ReturnAllProducts()
 		{
 			//Arrange
+			var expectedProducts = SeedTestData.Products;
 
 			//Act
 			var response = await TestClient.GetAsync(ApiRoutes.Products.Get);
@@ -46,7 +37,8 @@ namespace Product.IntegrationTest
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.OK);
-			products.Items.Count.Should().Be(2);
+			products.Items.Count.Should().Be(expectedProducts.Count);
+			products.Items.Should().Contain(expectedProducts);
 		}
 
 		/// <summary>
@@ -58,7 +50,7 @@ namespace Product.IntegrationTest
 		public async Task Get_ValidProductName_ProductFoundSuccessful()
 		{
 			//Arrange
-			var expectedProducts = new Products("Apple");
+			var expectedProducts = SeedTestData.Products.Where(p => p.Name.Contains("Apple")).ToList();
 
 			//Act
 			var response = await TestClient.GetAsync(ApiRoutes.Products.GetProductByName.Replace("{name}", "Apple"));
@@ -66,7 +58,8 @@ namespace Product.IntegrationTest
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.OK);
-			products.Should().Be(expectedProducts);
+			products.Items.Count.Should().Be(expectedProducts.Count);
+			products.Items.Should().Contain(expectedProducts);
 		}
 
 		/// <summary>
@@ -101,11 +94,11 @@ namespace Product.IntegrationTest
 		public async Task Get_ValidProducId_ProductFoundSuccessful(string id)
 		{
 			//Arrange
-			var expectedProduct = _testProducts.Where(x => x.Id == Guid.Parse(id)).FirstOrDefault();
+			var expectedProduct = SeedTestData.Products.Where(x => x.Id == Guid.Parse(id)).FirstOrDefault();
 
 			//Act
 			var response = await TestClient.GetAsync(ApiRoutes.Products.ProducIdUrl.Replace("{id}", id));
-			var product = JsonConvert.DeserializeObject<model.Product>(await response.Content.ReadAsStringAsync());
+			var product = JsonConvert.DeserializeObject<Product>(await response.Content.ReadAsStringAsync());
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -141,13 +134,13 @@ namespace Product.IntegrationTest
 		public async Task Post_ValidProduct_ProductCreationSuccessful()
 		{
 			//Arrange
-			model.Product product = new model.Product { Id = Guid.NewGuid(), Name = "Apple iPhone 8", Price = 1299.99M, DeliveryPrice = 15.99M, Description = "Newest mobile product from Apple." };
+			Product product = new Product { Id = Guid.NewGuid(), Name = "Apple iPhone 8", Price = 1299.99M, DeliveryPrice = 15.99M, Description = "Newest mobile product from Apple." };
 			JsonContent content = JsonContent.Create(product);
 			
 			//Act
 			var response = await TestClient.PostAsync(ApiRoutes.Products.Post, content);
 			var getProductResponse = await TestClient.GetAsync(ApiRoutes.Products.ProducIdUrl.Replace("{id}", product.Id.ToString()));
-			var newProduct = JsonConvert.DeserializeObject<model.Product>(await getProductResponse.Content.ReadAsStringAsync());
+			var newProduct = JsonConvert.DeserializeObject<Product>(await getProductResponse.Content.ReadAsStringAsync());
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -163,7 +156,7 @@ namespace Product.IntegrationTest
 		public async Task Post_EmptyProducts_BadRequestResponse()
 		{
 			//Arrange
-			model.Product product = new model.Product();
+			Product product = new Product();
 			JsonContent content = JsonContent.Create(product);
 
 			//Act
@@ -185,7 +178,7 @@ namespace Product.IntegrationTest
 		public async Task Put_ValidProduct_ProductUpdateSuccessful(string id)
 		{
 			//Arrange
-			var expectedProduct = _testProducts.Where(x => x.Id == Guid.Parse(id)).FirstOrDefault();
+			var expectedProduct = SeedTestData.Products.Where(x => x.Id == Guid.Parse(id)).FirstOrDefault();
 			
 			//Randomly change the product attribute.
 			Random rand = new Random();
@@ -203,7 +196,7 @@ namespace Product.IntegrationTest
 			//Act
 			var response = await TestClient.PutAsync(ApiRoutes.Products.ProducIdUrl.Replace("{id}", id), content);
 			var getProductResponse = await TestClient.GetAsync(ApiRoutes.Products.ProducIdUrl.Replace("{id}", id));
-			var product = JsonConvert.DeserializeObject<model.Product>(await getProductResponse.Content.ReadAsStringAsync());
+			var product = JsonConvert.DeserializeObject<Product>(await getProductResponse.Content.ReadAsStringAsync());
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -221,7 +214,7 @@ namespace Product.IntegrationTest
 		public async Task Put_InvalidProduct_BadRequestResponse(string id)
 		{
 			//Arrange
-			var expectedProduct = _testProducts.Where(x => x.Id == Guid.Parse(id)).FirstOrDefault();
+			var expectedProduct = SeedTestData.Products.Where(x => x.Id == Guid.Parse(id)).FirstOrDefault();
 			var invalidId = "8F2E9176-35EE-4F0A-AE55-83023D2DB133";
 			expectedProduct.Id = Guid.Parse(invalidId);
 			JsonContent content = JsonContent.Create(expectedProduct);
@@ -325,7 +318,7 @@ namespace Product.IntegrationTest
 		public async Task GetOption_ValidProductIDAndOptionID_ProductOptionFoundSuccessful(string productId, string optionId)
 		{
 			//Arrage
-			var productOptionExpected = new ProductOption(Guid.Parse(optionId));
+			var productOptionExpected = SeedTestData.ProductOptions.Where(p => p.Id == Guid.Parse(optionId)).FirstOrDefault();
 
 			//Act
 			var response = await TestClient.GetAsync(ApiRoutes.Products.GetOptionId.Replace("{id}", productId).Replace("{optionId}", optionId));
@@ -465,7 +458,7 @@ namespace Product.IntegrationTest
 		public async Task UpdateOption_ValidProductIDAndValidOptionID_OptionUpdatedSuccessful(string productId, string optionId)
 		{
 			//Arrange
-			var productOption = new ProductOption(Guid.Parse(optionId));
+			var productOption = SeedTestData.ProductOptions.Where(p => p.Id == Guid.Parse(optionId)).FirstOrDefault();
 
 			Random rand = new Random();
 			if (rand.Next(0, 2) == 0)
@@ -481,7 +474,7 @@ namespace Product.IntegrationTest
 
 			//Act
 			var response = await TestClient.PutAsync(ApiRoutes.Products.GetOptionId.Replace("{id}", productId).Replace("{optionId}", optionId), content);
-			var updatedProductOption = new ProductOption(Guid.Parse(optionId));
+			var updatedProductOption = new ProductOption();
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -555,7 +548,7 @@ namespace Product.IntegrationTest
 		public async Task DeleteOption_ValidProductIDAndOptionID_OptionDeletionSuccessful()
 		{
 			//Arrange
-			var productOption = new ProductOption(Guid.Parse("9AE6F477-A010-4EC9-B6A8-92A85D6C5F03"));
+			var productOption = SeedTestData.ProductOptions.Where(p => p.Id == Guid.Parse("9AE6F477-A010-4EC9-B6A8-92A85D6C5F03")).FirstOrDefault();
 
 			//Act
 			var response = await TestClient.DeleteAsync(ApiRoutes.Products.GetOption.Replace("{id}", productOption.ProductId.ToString()).Replace("{optionId}", productOption.Id.ToString()));
@@ -573,7 +566,7 @@ namespace Product.IntegrationTest
 		public async Task DeleteOption_ValidProductIDAndInvalidOption_BadRequestResponse()
 		{
 			//Arrange
-			var productOption = new ProductOption(Guid.Parse("9AE6F477-A010-4EC9-B6A8-92A85D6C5F03"));
+			var productOption = SeedTestData.ProductOptions.Where(p => p.Id == Guid.Parse("9AE6F477-A010-4EC9-B6A8-92A85D6C5F03")).FirstOrDefault();
 			var invalidOptionId = "9AE6F477-A010-4EC9-B6A8-92A85D6C5F33";
 
 			//Act
@@ -592,7 +585,7 @@ namespace Product.IntegrationTest
 		public async Task DeleteOption_InvalidProductIDAndValidOptionID_BadRequestResponse()
 		{
 			//Arrange
-			var productOption = new ProductOption(Guid.Parse("9AE6F477-A010-4EC9-B6A8-92A85D6C5F03"));
+			var productOption = SeedTestData.ProductOptions.Where(p => p.Id == Guid.Parse("9AE6F477-A010-4EC9-B6A8-92A85D6C5F03")).FirstOrDefault();
 			var invalidProductId = "DE1287C0-4B15-4A7B-9D8A-DD21B3CAFEC3";
 
 			//Act

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Product.IntegrationTest.Helper
+namespace IntegrationTest.Helper
 {
     /// <summary>
     /// Maintains REST API URLs. 

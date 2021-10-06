@@ -1,19 +1,27 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using API.Models;
+using System.Linq;
+using System.Threading.Tasks;
+using Domain;
+using Application.Products;
+using MediatR;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ProductsController : ControllerBase
+    public class ProductsController : BaseApiController
     {
+		public ProductsController(IMediator mediator) : base(mediator)
+		{
+		}
+
         [HttpGet]
-        public Products Get()
-        {
-            return new Products();
+        public async Task<IActionResult> Get(string name)
+        { 
+            return HandleResult(await Mediator.Send(new List.Query { Name = name }));
         }
 
+        /*
         [HttpGet("{id}")]
         public Product Get(Guid id)
         {
@@ -24,7 +32,7 @@ namespace API.Controllers
             return product;
         }
 
-        [HttpPost]
+		[HttpPost]
         public void Post(Product product)
         {
             product.Save();
@@ -94,5 +102,6 @@ namespace API.Controllers
             var opt = new ProductOption(id);
             opt.Delete();
         }
+        */
     }
 }
