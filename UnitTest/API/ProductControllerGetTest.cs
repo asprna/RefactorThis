@@ -17,12 +17,12 @@ using Xunit;
 
 namespace UnitTest.API
 {
-	public class ProductControllerTest
+	public class ProductControllerGetTest
 	{
 		private readonly ProductsController sut;
 		private readonly Mock<IMediator> mediator = new Mock<IMediator>();
 
-		public ProductControllerTest()
+		public ProductControllerGetTest()
 		{
 			sut = new ProductsController(mediator.Object);
 		}

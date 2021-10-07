@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using UnitTest.Helper;
 using Xunit;
 
-namespace UnitTest.Application.Product
+namespace UnitTest.Application.ProductTest
 {
 	public class ListTest
 	{
