@@ -35,29 +35,21 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new Create.Command { Product = product }));
         }
 
-        /*
+        
         [HttpPut("{id}")]
-        public void Update(Guid id, Product product)
+        public async Task<IActionResult> Update(Guid id, Product product)
         {
-            var orig = new Product(id)
-            {
-                Name = product.Name,
-                Description = product.Description,
-                Price = product.Price,
-                DeliveryPrice = product.DeliveryPrice
-            };
-
-            if (!orig.IsNew)
-                orig.Save();
+            return HandleResult(await Mediator.Send(new Edit.Command { Id = id, Product = product }));
         }
+
 
         [HttpDelete("{id}")]
-        public void Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var product = new Product(id);
-            product.Delete();
+            return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
         }
 
+        /*
         [HttpGet("{productId}/options")]
         public ProductOptions GetOptions(Guid productId)
         {

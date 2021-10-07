@@ -31,7 +31,7 @@ namespace UnitTest.Application.ProductTest
 		}
 
 		/// <summary>
-		/// The application should add the product to db whn the product is valid
+		/// The application should add the product to db when the product is valid
 		/// </summary>
 		[Fact]
 		public void Handler_ValidProduct_InsertSuccess()

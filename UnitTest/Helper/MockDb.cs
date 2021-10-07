@@ -29,10 +29,7 @@ namespace UnitTest.Helper
 
 			try
 			{
-				if(db.Products.Count() == 0 && db.ProductOptions.Count() == 0)
-				{
-					SeedTestData.InitializeDbForTests(db);
-				}
+				SeedTestData.ReinitializeDbForTests(db);
 			}
 			catch (Exception ex)
 			{

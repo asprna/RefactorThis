@@ -1,5 +1,4 @@
 ﻿using API;
-using IntegrationTest.Helper;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,7 +10,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace IntegrationTest
+namespace IntegrationTest.Helper
 {
 	public class IntegrationTest
 	{

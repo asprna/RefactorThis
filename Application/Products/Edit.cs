@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Application.Helper;
+using AutoMapper;
 using Domain;
 using FluentValidation;
 using MediatR;
@@ -15,9 +16,11 @@ namespace Application.Products
 {
 	public class Edit
 	{
-		public class Command : IRequest
+		public class Command : IRequest<Result<Unit>>
 		{
 			public Product Product { get; set; }
+
+			public Guid Id { get; set; }
 		}
 
 		public class CommandValidator : AbstractValidator<Command>
@@ -28,7 +31,7 @@ namespace Application.Products
 			}
 		}
 
-		public class Handler : IRequestHandler<Command>
+		public class Handler : IRequestHandler<Command, Result<Unit>>
 		{
 			private readonly DataContext _context;
 			private readonly IMapper _mapper;
@@ -39,15 +42,25 @@ namespace Application.Products
 				_mapper = mapper;
 			}
 
-			public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
+			public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
 			{
-				var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.Product.Id);
+				var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.Id);
+
+				if (product == null)
+				{
+					return null;
+				}
 
 				_mapper.Map(request.Product, product);
 
-				await _context.SaveChangesAsync();
+				var result = await _context.SaveChangesAsync() > 0;
 
-				return Unit.Value;
+				if (!result)
+				{
+					return Result<Unit>.Failure("Failed to update product");
+				}
+				
+				return Result<Unit>.Success(Unit.Value);
 			}
 		}
 	}
