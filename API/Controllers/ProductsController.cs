@@ -57,18 +57,14 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new ProductOptionList.Query { ProductID = productId }));
         }
 
-        /*
+        
         [HttpGet("{productId}/options/{id}")]
-        public ProductOption GetOption(Guid productId, Guid id)
+        public async Task<IActionResult> GetOption(Guid productId, Guid id)
         {
-            var option = new ProductOption(id);
-            if (option.IsNew)
-                throw new Exception();
-
-            return option;
+            return HandleResult(await Mediator.Send(new ProductOptionDetails.Query { ProductId = productId, Id = id }));
         }
 
-        
+        /*
         [HttpPost("{productId}/options")]
         public void CreateOption(Guid productId, ProductOption option)
         {

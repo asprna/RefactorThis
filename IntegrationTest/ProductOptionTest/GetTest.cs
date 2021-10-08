@@ -103,7 +103,7 @@ namespace IntegrationTest.ProductOptionTest
 			var response = await TestClient.GetAsync(helper.ApiRoutes.Products.GetOptionId.Replace("{id}", productId).Replace("{optionId}", optionId));
 
 			//Assert
-			response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+			response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 		}
 
 		/// <summary>
@@ -123,7 +123,7 @@ namespace IntegrationTest.ProductOptionTest
 			var response = await TestClient.GetAsync(helper.ApiRoutes.Products.GetOptionId.Replace("{id}", productId).Replace("{optionId}", optionId));
 
 			//Assert
-			response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+			response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 		}
 	}
 }

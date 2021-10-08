@@ -270,5 +270,72 @@ namespace UnitTest.API
 			mediator.Verify(x => x.Send(It.Is<ProductOptionList.Query>(y => y.ProductID == Guid.Parse(id)), It.IsAny<CancellationToken>()));
 			actionResult.Should().BeOfType<NotFoundResult>();
 		}
+
+		/// <summary>
+		/// Controller should return Ok response when it finds the product option details for the given product id and option id.
+		/// Endpoint: GET /products/{id}/options/{optionId}
+		/// </summary>
+		[Fact]
+		public void GetOptions_ValidPtoductIdAndValidOptionId_OkResponse()
+		{
+			//Arrange
+			var productId = "8F2E9176-35EE-4F0A-AE55-83023D2DB1A3";
+			var productOptionId = "0643CCF0-AB00-4862-B3C5-40E2731ABCC9";
+			var productOption = SeedTestData.ProductOptions.Where(p => p.ProductId == Guid.Parse(productId) && p.Id == Guid.Parse(productOptionId)).FirstOrDefault();
+			var result = Result<ProductOption>.Success(productOption);
+
+			mediator.Setup(x => x.Send(It.Is<ProductOptionDetails.Query>(y => y.ProductId == Guid.Parse(productId) && y.Id == Guid.Parse(productOptionId)), It.IsAny<CancellationToken>())).ReturnsAsync(result);
+
+			//Act
+			var actionResult = sut.GetOption(Guid.Parse(productId), Guid.Parse(productOptionId)).Result;
+
+			//Assert
+			mediator.Verify(x => x.Send(It.Is<ProductOptionDetails.Query>(y => y.ProductId == Guid.Parse(productId) && y.Id == Guid.Parse(productOptionId)), It.IsAny<CancellationToken>()));
+			actionResult.Should().BeOfType<OkObjectResult>();
+		}
+
+		/// <summary>
+		/// Controller should return Not Found response when the given product id is invalid.
+		/// Endpoint: GET /products/{id}/options/{optionId}
+		/// </summary>
+		[Fact]
+		public void GetOptions_InvalidPtoductIdAndValidOptionId_NotFoundResponse()
+		{
+			//Arrange
+			var productId = "8F2E9176-35EE-4F0A-AE55-83023D2DB133";
+			var productOptionId = "0643CCF0-AB00-4862-B3C5-40E2731ABCC9";
+			Result<ProductOption> result = null;
+
+			mediator.Setup(x => x.Send(It.Is<ProductOptionDetails.Query>(y => y.ProductId == Guid.Parse(productId) && y.Id == Guid.Parse(productOptionId)), It.IsAny<CancellationToken>())).ReturnsAsync(result);
+
+			//Act
+			var actionResult = sut.GetOption(Guid.Parse(productId), Guid.Parse(productOptionId)).Result;
+
+			//Assert
+			mediator.Verify(x => x.Send(It.Is<ProductOptionDetails.Query>(y => y.ProductId == Guid.Parse(productId) && y.Id == Guid.Parse(productOptionId)), It.IsAny<CancellationToken>()));
+			actionResult.Should().BeOfType<NotFoundResult>();
+		}
+
+		/// <summary>
+		/// Controller should return Not Found response when the given product option id is invalid.
+		/// Endpoint: GET /products/{id}/options/{optionId}
+		/// </summary>
+		[Fact]
+		public void GetOptions_ValidPtoductIdAndInvalidOptionId_NotFoundResponse()
+		{
+			//Arrange
+			var productId = "8F2E9176-35EE-4F0A-AE55-83023D2DB1A3";
+			var productOptionId = "0643CCF0-AB00-4862-B3C5-40E2731ABC99";
+			Result<ProductOption> result = null;
+
+			mediator.Setup(x => x.Send(It.Is<ProductOptionDetails.Query>(y => y.ProductId == Guid.Parse(productId) && y.Id == Guid.Parse(productOptionId)), It.IsAny<CancellationToken>())).ReturnsAsync(result);
+
+			//Act
+			var actionResult = sut.GetOption(Guid.Parse(productId), Guid.Parse(productOptionId)).Result;
+
+			//Assert
+			mediator.Verify(x => x.Send(It.Is<ProductOptionDetails.Query>(y => y.ProductId == Guid.Parse(productId) && y.Id == Guid.Parse(productOptionId)), It.IsAny<CancellationToken>()));
+			actionResult.Should().BeOfType<NotFoundResult>();
+		}
 	}
 }
