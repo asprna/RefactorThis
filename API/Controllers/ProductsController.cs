@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Domain;
 using Application.Products;
 using MediatR;
+using Application.ProductOptions;
 
 namespace API.Controllers
 {
@@ -49,13 +50,14 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new Delete.Command { Id = id }));
         }
 
-        /*
+        
         [HttpGet("{productId}/options")]
-        public ProductOptions GetOptions(Guid productId)
+        public async Task<IActionResult> GetOptions(Guid productId)
         {
-            return new ProductOptions(productId);
+            return HandleResult(await Mediator.Send(new ProductOptionList.Query { ProductID = productId }));
         }
 
+        /*
         [HttpGet("{productId}/options/{id}")]
         public ProductOption GetOption(Guid productId, Guid id)
         {
@@ -66,6 +68,7 @@ namespace API.Controllers
             return option;
         }
 
+        
         [HttpPost("{productId}/options")]
         public void CreateOption(Guid productId, ProductOption option)
         {

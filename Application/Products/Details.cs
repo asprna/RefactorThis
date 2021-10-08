@@ -32,6 +32,11 @@ namespace Application.Products
 			{
 				var product =  await _context.Products.FirstOrDefaultAsync(p => p.Id == request.Id);
 
+				if(product == null)
+				{
+					return null;
+				}
+
 				return Result<Product>.Success(product);
 			}
 		}

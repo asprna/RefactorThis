@@ -1,5 +1,6 @@
 ﻿using API.Controllers;
 using Application.Helper;
+using Application.ProductOptions;
 using Application.Products;
 using Domain;
 using FluentAssertions;
@@ -224,6 +225,50 @@ namespace UnitTest.API
 			//Assert
 			mediator.Verify(x => x.Send(It.Is<Details.Query>(y => y.Id == Guid.Parse(id)), It.IsAny<CancellationToken>()));
 			var okResult = actionResult.Should().BeOfType<NotFoundResult>().Subject;
+		}
+
+		/// <summary>
+		/// Controller should return Ok response when it finds the product options for the given product id.
+		/// Endpoint: GET /products/{id}/options
+		/// </summary>
+		[Fact]
+		public void GetOptions_ValidId_OkResponse()
+		{
+			//Arrange
+			var id = "8F2E9176-35EE-4F0A-AE55-83023D2DB1A3";
+			var productOptions = SeedTestData.ProductOptions.Where(p => p.ProductId == Guid.Parse(id)).ToList();
+			var result = Result<ProductOptions>.Success(new ProductOptions { Items = productOptions });
+
+			mediator.Setup(x => x.Send(It.Is<ProductOptionList.Query>(y => y.ProductID == Guid.Parse(id)), It.IsAny<CancellationToken>())).ReturnsAsync(result);
+
+			//Act
+			var actionResult = sut.GetOptions(Guid.Parse(id)).Result;
+
+			//Assert
+			mediator.Verify(x => x.Send(It.Is<ProductOptionList.Query>(y => y.ProductID == Guid.Parse(id)), It.IsAny<CancellationToken>()));
+			actionResult.Should().BeOfType<OkObjectResult>();
+		}
+
+		/// <summary>
+		/// Controller should return not found response when it cannot find the products by Id.
+		/// Endpoint: GET /products/{id}
+		/// </summary>
+		[Fact]
+		public void GetOptions_InvalidId_NotFoundResponse()
+		{
+			//Arrange
+			var id = "8F2E9176-35EE-4F0A-AE55-83023D2DB133";
+
+			Result<ProductOptions> result = null;
+			
+			mediator.Setup(x => x.Send(It.Is<ProductOptionList.Query>(y => y.ProductID == Guid.Parse(id)), It.IsAny<CancellationToken>())).ReturnsAsync(result);
+
+			//Act
+			var actionResult = sut.GetOptions(Guid.Parse(id)).Result;
+
+			//Assert
+			mediator.Verify(x => x.Send(It.Is<ProductOptionList.Query>(y => y.ProductID == Guid.Parse(id)), It.IsAny<CancellationToken>()));
+			actionResult.Should().BeOfType<NotFoundResult>();
 		}
 	}
 }

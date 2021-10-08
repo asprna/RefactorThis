@@ -59,8 +59,7 @@ namespace IntegrationTest.ProductOptionTest
 			var productsOption = JsonConvert.DeserializeObject<ProductOptions>(await response.Content.ReadAsStringAsync());
 
 			//Assert
-			response.StatusCode.Should().Be(HttpStatusCode.OK);
-			productsOption.Items.Count.Should().Be(0);
+			response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 		}
 
 		/// <summary>
