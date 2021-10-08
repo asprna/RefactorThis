@@ -57,7 +57,7 @@ namespace IntegrationTest.ProductOptionTest
 		/// </summary>
 		/// <returns></returns>
 		[Fact]
-		public async Task CreateOption_InvalidProductID_BadRequestResponse()
+		public async Task CreateOption_InvalidProductID_NotFoundResponse()
 		{
 			//Arrange
 			var newProductOption = new ProductOption
@@ -72,6 +72,32 @@ namespace IntegrationTest.ProductOptionTest
 
 			//Act
 			var response = await TestClient.PostAsync(helper.ApiRoutes.Products.GetOption.Replace("{id}", newProductOption.ProductId.ToString()), content);
+
+			//Assert
+			response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+		}
+
+		/// <summary>
+		/// Controller should not create the option when the given product ID is invalid.
+		/// Endpoint: POST /products/{id}/options
+		/// </summary>
+		/// <returns></returns>
+		[Fact]
+		public async Task CreateOption_ProductIDMissMatch_BadRequestResponse()
+		{
+			//Arrange
+			var newProductOption = new ProductOption
+			{
+				Id = Guid.NewGuid(),
+				ProductId = Guid.Parse("8F2E9176-35EE-4F0A-AE55-83023D2DB133"),
+				Description = "Dummy Option",
+				Name = "Dummy Name"
+			};
+
+			JsonContent content = JsonContent.Create(newProductOption);
+
+			//Act
+			var response = await TestClient.PostAsync(helper.ApiRoutes.Products.GetOption.Replace("{id}", "8F2E9176-35EE-4F0A-AE55-83023D2DB1A3"), content);
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

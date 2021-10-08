@@ -64,14 +64,13 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new ProductOptionDetails.Query { ProductId = productId, Id = id }));
         }
 
-        /*
         [HttpPost("{productId}/options")]
-        public void CreateOption(Guid productId, ProductOption option)
+        public async Task<IActionResult> CreateOption(Guid productId, ProductOption option)
         {
-            option.ProductId = productId;
-            option.Save();
+            return HandleResult(await Mediator.Send(new ProductOptionCreate.Command { ProductId = productId, ProductOption = option }));
         }
 
+        /*
         [HttpPut("{productId}/options/{id}")]
         public void UpdateOption(Guid id, ProductOption option)
         {
