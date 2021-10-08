@@ -1,5 +1,6 @@
 ﻿using API.Controllers;
 using Application.Helper;
+using Application.ProductOptions;
 using Application.Products;
 using Domain;
 using FluentAssertions;
@@ -122,5 +123,97 @@ namespace UnitTest.API
 			mediator.Verify(x => x.Send(It.Is<Edit.Command>(y => y.Product == product && y.Id == Guid.Parse(id)), It.IsAny<CancellationToken>()));
 			actionResult.Should().BeOfType<NotFoundResult>();
 		}
+
+
+		/// <summary>
+		/// Controller should return Ok response when it successfully update the product option.
+		/// Endpoint: PUT /products/{id}/options/{optionId}
+		/// </summary>
+		[Fact]
+		public void UpdateOption_UpdateSuccess_OkResponse()
+		{
+			//Arrange
+			var productOption = SeedTestData.ProductOptions.Where(x => x.Id == Guid.Parse("0643CCF0-AB00-4862-B3C5-40E2731ABCC9") && x.ProductId == Guid.Parse("8F2E9176-35EE-4F0A-AE55-83023D2DB1A3")).FirstOrDefault();
+
+			var newProductOption = new ProductOption
+			{
+				Id = productOption.Id,
+				Name = productOption.Name,
+				Description = "Updated Description",
+				ProductId = productOption.ProductId
+			};
+
+			var result = Result<Unit>.Success(Unit.Value);
+
+			mediator.Setup(x => x.Send(It.Is<ProductOptionEdit.Command>(y => y.Id == newProductOption.Id && y.ProductOption == newProductOption), It.IsAny<CancellationToken>())).ReturnsAsync(result);
+
+			//Act
+			var actionResult = sut.UpdateOption(newProductOption.Id, newProductOption).Result;
+
+			//Assert
+			mediator.Verify(x => x.Send(It.Is<ProductOptionEdit.Command>(y => y.Id == newProductOption.Id && y.ProductOption.Equals(newProductOption)), It.IsAny<CancellationToken>()));
+			actionResult.Should().BeOfType<OkObjectResult>();
+		}
+
+		/// <summary>
+		/// Controller should return Not Found response when Mediator returns null.
+		/// Endpoint: PUT /products/{id}/options/{optionId}
+		/// </summary>
+		[Fact]
+		public void UpdateOption_MediatorReturnNull_NotFoundResponse()
+		{
+			//Arrange
+			var productOption = SeedTestData.ProductOptions.Where(x => x.Id == Guid.Parse("0643CCF0-AB00-4862-B3C5-40E2731ABCC9") && x.ProductId == Guid.Parse("8F2E9176-35EE-4F0A-AE55-83023D2DB1A3")).FirstOrDefault();
+
+			var newProductOption = new ProductOption
+			{
+				Id = productOption.Id,
+				Name = productOption.Name,
+				Description = "Updated Description",
+				ProductId = productOption.ProductId
+			};
+
+			Result<Unit> result = null;
+
+			mediator.Setup(x => x.Send(It.Is<ProductOptionEdit.Command>(y => y.Id == newProductOption.Id && y.ProductOption == newProductOption), It.IsAny<CancellationToken>())).ReturnsAsync(result);
+
+			//Act
+			var actionResult = sut.UpdateOption(newProductOption.Id, newProductOption).Result;
+
+			//Assert
+			mediator.Verify(x => x.Send(It.Is<ProductOptionEdit.Command>(y => y.Id == newProductOption.Id && y.ProductOption == newProductOption), It.IsAny<CancellationToken>()));
+			actionResult.Should().BeOfType<NotFoundResult>();
+		}
+
+		/// <summary>
+		/// Controller should return Bad Request response when Mediator returns an error.
+		/// Endpoint: PUT /products/{id}/options/{optionId}
+		/// </summary>
+		[Fact]
+		public void UpdateOption_MediatorReturnError_BadRequestResponse()
+		{
+			//Arrange
+			var productOption = SeedTestData.ProductOptions.Where(x => x.Id == Guid.Parse("0643CCF0-AB00-4862-B3C5-40E2731ABCC9") && x.ProductId == Guid.Parse("8F2E9176-35EE-4F0A-AE55-83023D2DB1A3")).FirstOrDefault();
+
+			var newProductOption = new ProductOption
+			{
+				Id = productOption.Id,
+				Name = productOption.Name,
+				Description = "Updated Description",
+				ProductId = productOption.ProductId
+			};
+
+			var result = Result<Unit>.Failure("Failed to edit product option");
+
+			mediator.Setup(x => x.Send(It.Is<ProductOptionEdit.Command>(y => y.Id == newProductOption.Id && y.ProductOption == newProductOption), It.IsAny<CancellationToken>())).ReturnsAsync(result);
+
+			//Act
+			var actionResult = sut.UpdateOption(newProductOption.Id, newProductOption).Result;
+
+			//Assert
+			mediator.Verify(x => x.Send(It.Is<ProductOptionEdit.Command>(y => y.Id == newProductOption.Id && y.ProductOption == newProductOption), It.IsAny<CancellationToken>()));
+			actionResult.Should().BeOfType<BadRequestObjectResult>();
+		}
+
 	}
 }

@@ -49,11 +49,12 @@ namespace IntegrationTest.ProductOptionTest
 
 			//Act
 			var response = await TestClient.PutAsync(helper.ApiRoutes.Products.GetOptionId.Replace("{id}", productId).Replace("{optionId}", optionId), content);
-			var updatedProductOption = new ProductOption();
+			var responseProductsOption = await TestClient.GetAsync(helper.ApiRoutes.Products.GetOptionId.Replace("{id}", productId).Replace("{optionId}", optionId));
+			var updatedProductsOption = JsonConvert.DeserializeObject<ProductOption>(await responseProductsOption.Content.ReadAsStringAsync());
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.OK);
-			updatedProductOption.Should().BeEquivalentTo(productOption);
+			updatedProductsOption.Should().BeEquivalentTo(productOption);
 		}
 
 		/// <summary>
@@ -82,7 +83,7 @@ namespace IntegrationTest.ProductOptionTest
 			var response = await TestClient.PutAsync(helper.ApiRoutes.Products.GetOptionId.Replace("{id}", productId).Replace("{optionId}", optionId), content);
 
 			//Assert
-			response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+			response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 		}
 
 		/// <summary>
@@ -111,7 +112,7 @@ namespace IntegrationTest.ProductOptionTest
 			var response = await TestClient.PutAsync(helper.ApiRoutes.Products.GetOptionId.Replace("{id}", productId).Replace("{optionId}", optionId), content);
 
 			//Assert
-			response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+			response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 		}
 	}
 }

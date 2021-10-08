@@ -13,6 +13,7 @@ namespace Application.Helper
 		public MappingProfile()
 		{
 			CreateMap<Product, Product>();
+			CreateMap<ProductOption, ProductOption>();
 		}
 	}
 }

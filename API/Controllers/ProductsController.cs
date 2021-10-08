@@ -70,20 +70,14 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new ProductOptionCreate.Command { ProductId = productId, ProductOption = option }));
         }
 
-        /*
+        
         [HttpPut("{productId}/options/{id}")]
-        public void UpdateOption(Guid id, ProductOption option)
+        public async Task<IActionResult> UpdateOption(Guid id, ProductOption option)
         {
-            var orig = new ProductOption(id)
-            {
-                Name = option.Name,
-                Description = option.Description
-            };
-
-            if (!orig.IsNew)
-                orig.Save();
+            return HandleResult(await Mediator.Send(new ProductOptionEdit.Command { Id = id, ProductOption = option }));
         }
 
+        /*
         [HttpDelete("{productId}/options/{id}")]
         public void DeleteOption(Guid id)
         {
