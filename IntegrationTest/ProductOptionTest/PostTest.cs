@@ -12,6 +12,8 @@ using Xunit;
 //using API.Models;
 using System.Net.Http.Json;
 using Domain;
+using AutoMapper;
+using Application.Helper;
 
 namespace IntegrationTest.ProductOptionTest
 {
@@ -20,6 +22,18 @@ namespace IntegrationTest.ProductOptionTest
 	/// </summary>
 	public class PostTest : helper.IntegrationTest
 	{
+		private readonly IMapper _mapper;
+
+		public PostTest()
+		{
+			var mappingConfig = new MapperConfiguration(mc =>
+			{
+				mc.AddProfile(new MappingProfile());
+			});
+
+			_mapper = mappingConfig.CreateMapper();
+		}
+
 		/// <summary>
 		/// Controller should add the product option when the option is valid.
 		/// Endpoint: POST /products/{id}/options
@@ -37,6 +51,8 @@ namespace IntegrationTest.ProductOptionTest
 				Name = "Dummy Name"
 			};
 
+			var newProductOptionDTO = _mapper.Map<ProductOption, ProductOptionDTO>(newProductOption);
+
 			JsonContent content = JsonContent.Create(newProductOption);
 
 			//Act
@@ -48,7 +64,7 @@ namespace IntegrationTest.ProductOptionTest
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.OK);
-			productsOption.Should().BeEquivalentTo(newProductOption);
+			productsOption.Should().BeEquivalentTo(newProductOptionDTO);
 		}
 
 		/// <summary>

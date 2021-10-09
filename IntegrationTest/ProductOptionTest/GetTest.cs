@@ -12,6 +12,8 @@ using Xunit;
 //using API.Models;
 using System.Net.Http.Json;
 using Domain;
+using AutoMapper;
+using Application.Helper;
 
 namespace IntegrationTest.ProductOptionTest
 {
@@ -20,6 +22,18 @@ namespace IntegrationTest.ProductOptionTest
 	/// </summary>
 	public class GetTest : helper.IntegrationTest
 	{
+		private readonly IMapper _mapper;
+
+		public GetTest()
+		{
+			var mappingConfig = new MapperConfiguration(mc =>
+			{
+				mc.AddProfile(new MappingProfile());
+			});
+
+			_mapper = mappingConfig.CreateMapper();
+		}
+
 		/// <summary>
 		/// Controller should return all the options for the given product ID
 		/// Endpoint: GET /products/{id}/options
@@ -76,6 +90,7 @@ namespace IntegrationTest.ProductOptionTest
 		{
 			//Arrage
 			var productOptionExpected = helper.SeedTestData.ProductOptions.Where(p => p.Id == Guid.Parse(optionId)).FirstOrDefault();
+			var productOptionExpectedDTO = _mapper.Map<ProductOption, ProductOptionDTO>(productOptionExpected);
 
 			//Act
 			var response = await TestClient.GetAsync(helper.ApiRoutes.Products.GetOptionId.Replace("{id}", productId).Replace("{optionId}", optionId));
@@ -83,7 +98,7 @@ namespace IntegrationTest.ProductOptionTest
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.OK);
-			productsOption.Should().BeEquivalentTo(productOptionExpected);
+			productsOption.Should().BeEquivalentTo(productOptionExpectedDTO);
 		}
 
 		/// <summary>

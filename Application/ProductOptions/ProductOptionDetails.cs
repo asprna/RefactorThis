@@ -1,4 +1,5 @@
 ﻿using Application.Helper;
+using AutoMapper;
 using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -14,22 +15,24 @@ namespace Application.ProductOptions
 {
 	public class ProductOptionDetails
 	{
-		public class Query : IRequest<Result<ProductOption>>
+		public class Query : IRequest<Result<ProductOptionDTO>>
 		{
 			public Guid ProductId { get; set; }
 			public Guid Id { get; set; }
 		}
 
-		public class Handler : IRequestHandler<Query, Result<ProductOption>>
+		public class Handler : IRequestHandler<Query, Result<ProductOptionDTO>>
 		{
 			private readonly DataContext _context;
+			private readonly IMapper _mapper;
 
-			public Handler(DataContext context)
+			public Handler(DataContext context, IMapper mapper)
 			{
 				_context = context;
+				_mapper = mapper;
 			}
 
-			public async Task<Result<ProductOption>> Handle(Query request, CancellationToken cancellationToken)
+			public async Task<Result<ProductOptionDTO>> Handle(Query request, CancellationToken cancellationToken)
 			{
 				var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.ProductId);
 
@@ -45,7 +48,9 @@ namespace Application.ProductOptions
 					return null;
 				}
 
-				return Result<ProductOption>.Success(productOption);
+				var productOptionDTO = _mapper.Map<ProductOption, ProductOptionDTO>(productOption);
+
+				return Result<ProductOptionDTO>.Success(productOptionDTO);
 			}
 		}
 	}

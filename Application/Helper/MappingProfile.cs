@@ -14,6 +14,7 @@ namespace Application.Helper
 		{
 			CreateMap<Product, Product>();
 			CreateMap<ProductOption, ProductOption>();
+			CreateMap<ProductOption, ProductOptionDTO>();
 		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using Application.Helper;
 using Application.ProductOptions;
+using AutoMapper;
 using Domain;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
@@ -19,11 +20,18 @@ namespace UnitTest.Application.ProductOptionTest
 	{
 		private readonly ProductOptionList.Handler sut;
 		private readonly Mock<ILogger<MockDb>> _logger = new Mock<ILogger<MockDb>>();
+		private readonly IMapper _mapper;
 
 		public ProductOptionListTest()
 		{
 			var mockDb = new MockDb(_logger.Object);
-			sut = new ProductOptionList.Handler(mockDb.GetTestDbContext());
+			var mappingConfig = new MapperConfiguration(mc =>
+			{
+				mc.AddProfile(new MappingProfile());
+			});
+
+			_mapper = mappingConfig.CreateMapper();
+			sut = new ProductOptionList.Handler(mockDb.GetTestDbContext(), _mapper);
 		}
 
 		/// <summary>
@@ -34,11 +42,13 @@ namespace UnitTest.Application.ProductOptionTest
 		{
 			//Arrange
 			var id = "8F2E9176-35EE-4F0A-AE55-83023D2DB1A3";
-			var productOption = new ProductOptions { Items = SeedTestData.ProductOptions.Where(p => p.ProductId == Guid.Parse(id)).ToList() };
+			var productOptions = SeedTestData.ProductOptions.Where(p => p.ProductId == Guid.Parse(id)).ToList();
+			var productOptionsDTO = _mapper.Map<List<ProductOption>, List<ProductOptionDTO>>(productOptions);
+			var productOption = new ProductOptionsDTO { Items = productOptionsDTO };
 
 			var request = new ProductOptionList.Query { ProductID = Guid.Parse(id) };
 
-			var expectedResult = Result<ProductOptions>.Success(productOption);
+			var expectedResult = Result<ProductOptionsDTO>.Success(productOption);
 
 			//Act
 			var result = sut.Handle(request, CancellationToken.None).Result;

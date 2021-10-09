@@ -12,6 +12,8 @@ using Xunit;
 //using API.Models;
 using System.Net.Http.Json;
 using Domain;
+using AutoMapper;
+using Application.Helper;
 
 namespace IntegrationTest.ProductOptionTest
 {
@@ -20,6 +22,18 @@ namespace IntegrationTest.ProductOptionTest
 	/// </summary>
 	public class PutTest : helper.IntegrationTest
 	{
+		private readonly IMapper _mapper;
+
+		public PutTest()
+		{
+			var mappingConfig = new MapperConfiguration(mc =>
+			{
+				mc.AddProfile(new MappingProfile());
+			});
+
+			_mapper = mappingConfig.CreateMapper();
+		}
+
 		/// <summary>
 		/// Controller should update the correct product option.
 		/// Endpoint: PUT /products/{id}/options/{optionId}
@@ -45,6 +59,8 @@ namespace IntegrationTest.ProductOptionTest
 				productOption.Description = "New Description";
 			}
 
+			var productOptionDTO = _mapper.Map<ProductOption, ProductOptionDTO>(productOption);
+
 			JsonContent content = JsonContent.Create(productOption);
 
 			//Act
@@ -54,7 +70,7 @@ namespace IntegrationTest.ProductOptionTest
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.OK);
-			updatedProductsOption.Should().BeEquivalentTo(productOption);
+			updatedProductsOption.Should().BeEquivalentTo(productOptionDTO);
 		}
 
 		/// <summary>

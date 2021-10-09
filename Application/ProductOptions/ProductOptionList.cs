@@ -1,5 +1,6 @@
 ﻿using Application.Helper;
 using Application.Products;
+using AutoMapper;
 using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -15,21 +16,23 @@ namespace Application.ProductOptions
 {
 	public class ProductOptionList
 	{
-		public class Query : IRequest<Result<Domain.ProductOptions>>
+		public class Query : IRequest<Result<Domain.ProductOptionsDTO>>
 		{
 			public Guid ProductID { get; set; }
 		}
 
-		public class Handler : IRequestHandler<Query, Result<Domain.ProductOptions>>
+		public class Handler : IRequestHandler<Query, Result<Domain.ProductOptionsDTO>>
 		{
 			private readonly DataContext _context;
+			private readonly IMapper _mapper;
 
-			public Handler(DataContext context)
+			public Handler(DataContext context, IMapper mapper)
 			{
 				_context = context;
+				_mapper = mapper;
 			}
 
-			public async Task<Result<Domain.ProductOptions>> Handle(Query request, CancellationToken cancellationToken)
+			public async Task<Result<Domain.ProductOptionsDTO>> Handle(Query request, CancellationToken cancellationToken)
 			{
 				var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.ProductID);
 
@@ -40,12 +43,14 @@ namespace Application.ProductOptions
 
 				var options = await _context.ProductOptions.Where(p => p.ProductId == request.ProductID).ToListAsync();
 
-				var productOptions = new Domain.ProductOptions
+				List<ProductOptionDTO> productOptionDTOs = _mapper.Map<List<ProductOption>, List<ProductOptionDTO>>(options);
+
+				var productOptions = new Domain.ProductOptionsDTO
 				{
-					Items = options
+					Items = productOptionDTOs
 				};
 
-				return Result<Domain.ProductOptions>.Success(productOptions);
+				return Result<Domain.ProductOptionsDTO>.Success(productOptions);
 			}
 		}
 	}

@@ -2,6 +2,7 @@
 using Application.Helper;
 using Application.ProductOptions;
 using Application.Products;
+using AutoMapper;
 using Domain;
 using FluentAssertions;
 using MediatR;
@@ -22,10 +23,18 @@ namespace UnitTest.API
 	{
 		private readonly ProductsController sut;
 		private readonly Mock<IMediator> mediator = new Mock<IMediator>();
+		private readonly IMapper _mapper;
 
 		public ProductControllerGetTest()
 		{
 			sut = new ProductsController(mediator.Object);
+
+			var mappingConfig = new MapperConfiguration(mc =>
+			{
+				mc.AddProfile(new MappingProfile());
+			});
+
+			_mapper = mappingConfig.CreateMapper();
 		}
 
 		/// <summary>
@@ -237,7 +246,8 @@ namespace UnitTest.API
 			//Arrange
 			var id = "8F2E9176-35EE-4F0A-AE55-83023D2DB1A3";
 			var productOptions = SeedTestData.ProductOptions.Where(p => p.ProductId == Guid.Parse(id)).ToList();
-			var result = Result<ProductOptions>.Success(new ProductOptions { Items = productOptions });
+			var productOptionsDTO = _mapper.Map<List<ProductOption>, List<ProductOptionDTO>>(productOptions);
+			var result = Result<ProductOptionsDTO>.Success(new ProductOptionsDTO { Items = productOptionsDTO });
 
 			mediator.Setup(x => x.Send(It.Is<ProductOptionList.Query>(y => y.ProductID == Guid.Parse(id)), It.IsAny<CancellationToken>())).ReturnsAsync(result);
 
@@ -259,7 +269,7 @@ namespace UnitTest.API
 			//Arrange
 			var id = "8F2E9176-35EE-4F0A-AE55-83023D2DB133";
 
-			Result<ProductOptions> result = null;
+			Result<ProductOptionsDTO> result = null;
 			
 			mediator.Setup(x => x.Send(It.Is<ProductOptionList.Query>(y => y.ProductID == Guid.Parse(id)), It.IsAny<CancellationToken>())).ReturnsAsync(result);
 
@@ -282,7 +292,8 @@ namespace UnitTest.API
 			var productId = "8F2E9176-35EE-4F0A-AE55-83023D2DB1A3";
 			var productOptionId = "0643CCF0-AB00-4862-B3C5-40E2731ABCC9";
 			var productOption = SeedTestData.ProductOptions.Where(p => p.ProductId == Guid.Parse(productId) && p.Id == Guid.Parse(productOptionId)).FirstOrDefault();
-			var result = Result<ProductOption>.Success(productOption);
+			var productOptionDTO = _mapper.Map<ProductOption, ProductOptionDTO>(productOption);
+			var result = Result<ProductOptionDTO>.Success(productOptionDTO);
 
 			mediator.Setup(x => x.Send(It.Is<ProductOptionDetails.Query>(y => y.ProductId == Guid.Parse(productId) && y.Id == Guid.Parse(productOptionId)), It.IsAny<CancellationToken>())).ReturnsAsync(result);
 
@@ -304,7 +315,7 @@ namespace UnitTest.API
 			//Arrange
 			var productId = "8F2E9176-35EE-4F0A-AE55-83023D2DB133";
 			var productOptionId = "0643CCF0-AB00-4862-B3C5-40E2731ABCC9";
-			Result<ProductOption> result = null;
+			Result<ProductOptionDTO> result = null;
 
 			mediator.Setup(x => x.Send(It.Is<ProductOptionDetails.Query>(y => y.ProductId == Guid.Parse(productId) && y.Id == Guid.Parse(productOptionId)), It.IsAny<CancellationToken>())).ReturnsAsync(result);
 
@@ -326,7 +337,7 @@ namespace UnitTest.API
 			//Arrange
 			var productId = "8F2E9176-35EE-4F0A-AE55-83023D2DB1A3";
 			var productOptionId = "0643CCF0-AB00-4862-B3C5-40E2731ABC99";
-			Result<ProductOption> result = null;
+			Result<ProductOptionDTO> result = null;
 
 			mediator.Setup(x => x.Send(It.Is<ProductOptionDetails.Query>(y => y.ProductId == Guid.Parse(productId) && y.Id == Guid.Parse(productOptionId)), It.IsAny<CancellationToken>())).ReturnsAsync(result);
 
