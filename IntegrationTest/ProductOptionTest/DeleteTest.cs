@@ -32,10 +32,10 @@ namespace IntegrationTest.ProductOptionTest
 			var productOption = helper.SeedTestData.ProductOptions.Where(p => p.Id == Guid.Parse("9AE6F477-A010-4EC9-B6A8-92A85D6C5F03")).FirstOrDefault();
 
 			//Act
-			var response = await TestClient.DeleteAsync(helper.ApiRoutes.Products.GetOption.Replace("{id}", productOption.ProductId.ToString()).Replace("{optionId}", productOption.Id.ToString()));
+			var response = await TestClient.DeleteAsync(helper.ApiRoutes.Products.GetOptionId.Replace("{id}", productOption.ProductId.ToString()).Replace("{optionId}", productOption.Id.ToString()));
 
 			//Assert
-			response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+			response.StatusCode.Should().Be(HttpStatusCode.OK);
 		}
 
 		/// <summary>
@@ -51,10 +51,10 @@ namespace IntegrationTest.ProductOptionTest
 			var invalidOptionId = "9AE6F477-A010-4EC9-B6A8-92A85D6C5F33";
 
 			//Act
-			var response = await TestClient.DeleteAsync(helper.ApiRoutes.Products.GetOption.Replace("{id}", productOption.ProductId.ToString()).Replace("{optionId}", invalidOptionId));
+			var response = await TestClient.DeleteAsync(helper.ApiRoutes.Products.GetOptionId.Replace("{id}", productOption.ProductId.ToString()).Replace("{optionId}", invalidOptionId));
 
 			//Assert
-			response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+			response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 		}
 
 		/// <summary>
@@ -67,13 +67,13 @@ namespace IntegrationTest.ProductOptionTest
 		{
 			//Arrange
 			var productOption = helper.SeedTestData.ProductOptions.Where(p => p.Id == Guid.Parse("9AE6F477-A010-4EC9-B6A8-92A85D6C5F03")).FirstOrDefault();
-			var invalidProductId = "DE1287C0-4B15-4A7B-9D8A-DD21B3CAFEC3";
+			var invalidProductId = "DE1287C0-4B15-4A7B-9D8A-DD21B3CAFE33";
 
 			//Act
-			var response = await TestClient.DeleteAsync(helper.ApiRoutes.Products.GetOption.Replace("{id}", invalidProductId).Replace("{optionId}", productOption.Id.ToString()));
+			var response = await TestClient.DeleteAsync(helper.ApiRoutes.Products.GetOptionId.Replace("{id}", invalidProductId).Replace("{optionId}", productOption.Id.ToString()));
 
 			//Assert
-			response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+			response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 		}
 	}
 }

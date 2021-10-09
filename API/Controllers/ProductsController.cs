@@ -77,13 +77,10 @@ namespace API.Controllers
             return HandleResult(await Mediator.Send(new ProductOptionEdit.Command { Id = id, ProductOption = option }));
         }
 
-        /*
         [HttpDelete("{productId}/options/{id}")]
-        public void DeleteOption(Guid id)
+        public async Task<IActionResult> DeleteOption(Guid productId, Guid id)
         {
-            var opt = new ProductOption(id);
-            opt.Delete();
+            return HandleResult(await Mediator.Send(new ProductOptionDelete.Command { Id = id, ProductId = productId }));
         }
-        */
     }
 }
