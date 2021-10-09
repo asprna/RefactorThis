@@ -11,11 +11,16 @@ using System.Threading.Tasks;
 
 namespace API.Middleware
 {
+    /// <summary>
+    /// Global Exception Handler.
+    /// This will catch any exception of the request.
+    /// </summary>
 	public class ExceptionMiddleware
 	{
         private readonly RequestDelegate _next;
         private readonly ILogger<ExceptionMiddleware> _logger;
         private readonly IHostEnvironment _env;
+
         public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger,
             IHostEnvironment env)
         {

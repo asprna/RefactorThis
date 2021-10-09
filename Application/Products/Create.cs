@@ -3,15 +3,14 @@ using Domain;
 using FluentValidation;
 using MediatR;
 using Persistence;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Application.Products
 {
+	/// <summary>
+	/// Mediator Pattern : Product Create
+	/// </summary>
 	public class Create
 	{
 		public class Command : IRequest<Result<Unit>>
@@ -38,8 +37,10 @@ namespace Application.Products
 
 			public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
 			{
+				//Add the new product
 				_context.Products.Add(request.Product);
 
+				//Save changes to DB
 				var result = await _context.SaveChangesAsync() > 0;
 
 				if (!result) return Result<Unit>.Failure("Failed to create product");

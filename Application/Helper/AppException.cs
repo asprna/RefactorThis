@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.Helper
+﻿namespace Application.Helper
 {
+    /// <summary>
+    /// Global Application Exception Class.
+    /// </summary>
 	public class AppException
 	{
         public AppException(int statusCode, string message, string details = null)

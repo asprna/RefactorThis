@@ -3,16 +3,17 @@ using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ProductList = Domain.Products;
 
 namespace Application.Products
 {
+	/// <summary>
+	/// Mediator Patter : Product List 
+	/// </summary>
 	public class List
 	{
 		public class Query : IRequest<Result<ProductList>> 
@@ -35,10 +36,12 @@ namespace Application.Products
 
 				if (!string.IsNullOrWhiteSpace(request.Name))
 				{
+					//Find all the products that matches the given Name
 					items = await _context.Products.Where(p => p.Name.ToLower().Contains(request.Name.ToLower())).ToListAsync();
 				}
 				else
 				{
+					//Find all the products
 					items = await _context.Products.ToListAsync();
 				}
 

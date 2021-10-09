@@ -14,6 +14,9 @@ using System.Threading.Tasks;
 
 namespace Application.ProductOptions
 {
+	/// <summary>
+	/// Mediator Pattern : Product Option List
+	/// </summary>
 	public class ProductOptionList
 	{
 		public class Query : IRequest<Result<Domain.ProductOptionsDTO>>
@@ -34,6 +37,7 @@ namespace Application.ProductOptions
 
 			public async Task<Result<Domain.ProductOptionsDTO>> Handle(Query request, CancellationToken cancellationToken)
 			{
+				//Find the product
 				var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.ProductID);
 
 				if (product == null)
@@ -41,8 +45,10 @@ namespace Application.ProductOptions
 					return null;
 				}
 
+				//Find the product options for the given product
 				var options = await _context.ProductOptions.Where(p => p.ProductId == request.ProductID).ToListAsync();
 
+				//Map Product Option to Product option DTO
 				List<ProductOptionDTO> productOptionDTOs = _mapper.Map<List<ProductOption>, List<ProductOptionDTO>>(options);
 
 				var productOptions = new Domain.ProductOptionsDTO

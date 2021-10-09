@@ -6,14 +6,14 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Application.Products
 {
+	/// <summary>
+	/// Mediator Pattern : Product Edit
+	/// </summary>
 	public class Edit
 	{
 		public class Command : IRequest<Result<Unit>>
@@ -44,6 +44,7 @@ namespace Application.Products
 
 			public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
 			{
+				//Find the product
 				var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.Id);
 
 				if (product == null)
@@ -51,8 +52,10 @@ namespace Application.Products
 					return null;
 				}
 
+				//Map product changes from the request to product
 				_mapper.Map(request.Product, product);
 
+				//Save product to DB
 				var result = await _context.SaveChangesAsync() > 0;
 
 				if (!result)

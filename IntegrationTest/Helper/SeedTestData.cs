@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace IntegrationTest.Helper
 {
+	/// <summary>
+	/// Test Data
+	/// </summary>
 	public static class SeedTestData
 	{
 		public static readonly List<Product> Products = new List<Product>

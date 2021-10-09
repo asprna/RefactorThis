@@ -1,15 +1,16 @@
 ﻿using AutoMapper;
 using Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Helper
 {
+	/// <summary>
+	/// AutoMapper Profiler
+	/// </summary>
 	public class MappingProfile : Profile
 	{
+		/// <summary>
+		/// AutoMapper configuration.
+		/// </summary>
 		public MappingProfile()
 		{
 			CreateMap<Product, Product>();

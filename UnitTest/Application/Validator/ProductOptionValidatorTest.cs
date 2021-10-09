@@ -11,6 +11,9 @@ using Xunit;
 
 namespace UnitTest.Application.Validator
 {
+	/// <summary>
+	/// Product option validator
+	/// </summary>
 	public class ProductOptionValidatorTest
 	{
 		private readonly ProductOptionValidator _productOptionValidator;

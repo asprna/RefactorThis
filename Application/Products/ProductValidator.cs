@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Application.Products
 {
+	/// <summary>
+	/// Product Validator
+	/// </summary>
 	public class ProductValidator : AbstractValidator<Product>
 	{
 		public ProductValidator()

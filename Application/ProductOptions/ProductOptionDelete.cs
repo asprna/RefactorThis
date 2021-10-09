@@ -3,14 +3,14 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Application.ProductOptions
 {
+	/// <summary>
+	/// Mediator Pattern : Product Option Delete
+	/// </summary>
 	public class ProductOptionDelete
 	{
 		public class Command : IRequest<Result<Unit>>
@@ -30,6 +30,7 @@ namespace Application.ProductOptions
 
 			public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
 			{
+				//Find the product option 
 				var productOption = await _context.ProductOptions.FirstOrDefaultAsync(p => p.Id == request.Id && p.ProductId == request.ProductId);
 
 				if (productOption == null)
@@ -37,8 +38,10 @@ namespace Application.ProductOptions
 					return null;
 				}
 
+				//Remove the product option from the data context
 				_context.Remove(productOption);
 
+				//Save changes to DB
 				var result = await _context.SaveChangesAsync() > 0;
 
 				if (!result)

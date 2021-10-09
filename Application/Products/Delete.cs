@@ -1,15 +1,16 @@
 ﻿using Application.Helper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-//using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Application.Products
 {
+	/// <summary>
+	/// Mediator Pattern : Product Delete
+	/// </summary>
 	public class Delete
 	{
 		public class Command : IRequest<Result<Unit>>
@@ -28,6 +29,7 @@ namespace Application.Products
 
 			public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
 			{
+				//Find the product
 				var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.Id);
 
 				if (product == null)
@@ -35,8 +37,10 @@ namespace Application.Products
 					return null;
 				}
 
+				//Remove the product from the data context
 				_context.Remove(product);
 
+				//Save changes to DB
 				var result = await _context.SaveChangesAsync() > 0;
 
 				if (!result)

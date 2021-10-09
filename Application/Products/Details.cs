@@ -4,14 +4,14 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Application.Products
 {
+	/// <summary>
+	/// Mediator Pattern : Product Details
+	/// </summary>
 	public class Details
 	{
 		public class Query : IRequest<Result<Product>>
@@ -30,6 +30,7 @@ namespace Application.Products
 
 			public async Task<Result<Product>> Handle(Query request, CancellationToken cancellationToken)
 			{
+				//Find the products
 				var product =  await _context.Products.FirstOrDefaultAsync(p => p.Id == request.Id);
 
 				if(product == null)
