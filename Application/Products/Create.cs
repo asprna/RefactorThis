@@ -4,6 +4,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Persistence;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -40,20 +41,28 @@ namespace Application.Products
 
 			public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
 			{
-				_logger.LogInformation("Adding a new product");
-				_context.Products.Add(request.Product);
-
-				_logger.LogInformation("Saving DB changes");
-				var result = await _context.SaveChangesAsync() > 0;
-
-				if (!result)
+				try
 				{
-					_logger.LogInformation("Unable to save changes to DB");
+					_logger.LogInformation("Adding a new product");
+					_context.Products.Add(request.Product);
+
+					_logger.LogInformation("Saving DB changes");
+					var result = await _context.SaveChangesAsync() > 0;
+
+					if (!result)
+					{
+						_logger.LogInformation("Unable to save changes to DB");
+						return Result<Unit>.Failure("Failed to create product");
+					}
+
+					_logger.LogInformation("Create a new product - Success");
+					return Result<Unit>.Success(Unit.Value);
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "Unhandle error occured");
 					return Result<Unit>.Failure("Failed to create product");
 				}
-
-				_logger.LogInformation("Create a new product - Success");
-				return Result<Unit>.Success(Unit.Value);
 			}
 		}
 	}

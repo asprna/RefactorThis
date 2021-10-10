@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Persistence;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -35,29 +36,38 @@ namespace Application.Products
 
 			public async Task<Result<ProductList>> Handle(Query request, CancellationToken cancellationToken)
 			{
-				var items = new List<Product>();
-
-				if (!string.IsNullOrWhiteSpace(request.Name))
+				try
 				{
-					_logger.LogInformation("Find all products by its name");
-					//Find all the products that matches the given Name
-					items = await _context.Products.Where(p => p.Name.ToLower().Contains(request.Name.ToLower())).ToListAsync();
+					var items = new List<Product>();
+
+					if (!string.IsNullOrWhiteSpace(request.Name))
+					{
+						_logger.LogInformation("Find all products by its name");
+						//Find all the products that matches the given Name
+						items = await _context.Products.Where(p => p.Name.ToLower().Contains(request.Name.ToLower())).ToListAsync();
+					}
+					else
+					{
+						_logger.LogInformation("Find all products");
+						//Find all the products
+						items = await _context.Products.ToListAsync();
+					}
+
+					throw new Exception();
+					_logger.LogInformation("Adding all products to Products object");
+					var products = new Domain.Products
+					{
+						Items = items
+					};
+
+					_logger.LogInformation("Get all products - Success");
+					return Result<Domain.Products>.Success(products);
 				}
-				else
+				catch (Exception ex)
 				{
-					_logger.LogInformation("Find all products");
-					//Find all the products
-					items = await _context.Products.ToListAsync();
+					_logger.LogError(ex, "Unhandle error occured");
+					return Result<Domain.Products>.Failure("The request failed");
 				}
-
-				_logger.LogInformation("Adding all products to Products object");
-				var products = new Domain.Products
-				{
-					Items = items
-				};
-
-				_logger.LogInformation("Get all products - Success");
-				return Result<Domain.Products>.Success(products);
 			}
 		}
 	}

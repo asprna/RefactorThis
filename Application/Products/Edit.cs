@@ -47,29 +47,37 @@ namespace Application.Products
 
 			public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
 			{
-				_logger.LogInformation("Find the correct product");
-				var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.Id);
-
-				if (product == null)
+				try
 				{
-					_logger.LogInformation("Unable find the product");
-					return null;
+					_logger.LogInformation("Find the correct product");
+					var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.Id);
+
+					if (product == null)
+					{
+						_logger.LogInformation("Unable find the product");
+						return null;
+					}
+
+					_logger.LogInformation("Mapping the product changes from the request to product context");
+					_mapper.Map(request.Product, product);
+
+					_logger.LogInformation("Saving changes to DB");
+					var result = await _context.SaveChangesAsync() > 0;
+
+					if (!result)
+					{
+						_logger.LogInformation("Failed to update product");
+						return Result<Unit>.Failure("Failed to update product");
+					}
+
+					_logger.LogInformation("Editing product details - Success");
+					return Result<Unit>.Success(Unit.Value);
 				}
-
-				_logger.LogInformation("Mapping the product changes from the request to product context");
-				_mapper.Map(request.Product, product);
-
-				_logger.LogInformation("Saving changes to DB");
-				var result = await _context.SaveChangesAsync() > 0;
-
-				if (!result)
+				catch (Exception ex)
 				{
-					_logger.LogInformation("Failed to update product");
+					_logger.LogError(ex, "Unhandle error occured");
 					return Result<Unit>.Failure("Failed to update product");
 				}
-
-				_logger.LogInformation("Editing product details - Success");
-				return Result<Unit>.Success(Unit.Value);
 			}
 		}
 	}

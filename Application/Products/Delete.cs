@@ -32,29 +32,37 @@ namespace Application.Products
 
 			public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
 			{
-				_logger.LogInformation("Find the correct product by its product ID");
-				var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.Id);
-
-				if (product == null)
+				try
 				{
-					_logger.LogInformation("Product not found");
-					return null;
+					_logger.LogInformation("Find the correct product by its product ID");
+					var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.Id);
+
+					if (product == null)
+					{
+						_logger.LogInformation("Product not found");
+						return null;
+					}
+
+					_logger.LogInformation("Removing the product from the datacontext");
+					_context.Remove(product);
+
+					_logger.LogInformation("Saving changes to DB");
+					var result = await _context.SaveChangesAsync() > 0;
+
+					if (!result)
+					{
+						_logger.LogInformation("Unable to delete the product");
+						return Result<Unit>.Failure("Failed to delete the product");
+					}
+
+					_logger.LogInformation("Product deletion - Success");
+					return Result<Unit>.Success(Unit.Value);
 				}
-
-				_logger.LogInformation("Removing the product from the datacontext");
-				_context.Remove(product);
-
-				_logger.LogInformation("Saving changes to DB");
-				var result = await _context.SaveChangesAsync() > 0;
-
-				if (!result)
+				catch (Exception ex)
 				{
-					_logger.LogInformation("Unable to delete the product");
+					_logger.LogError(ex, "Unhandle error occured");
 					return Result<Unit>.Failure("Failed to delete the product");
 				}
-
-				_logger.LogInformation("Product deletion - Success");
-				return Result<Unit>.Success(Unit.Value);
 			}
 		}
 	}

@@ -37,29 +37,37 @@ namespace Application.ProductOptions
 
 			public async Task<Result<ProductOptionDTO>> Handle(Query request, CancellationToken cancellationToken)
 			{
-				_logger.LogInformation("Checking if the product exists");
-				var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.ProductId);
-
-				if (product == null)
+				try
 				{
-					_logger.LogInformation("Unable find the product details");
-					return null;
+					_logger.LogInformation("Checking if the product exists");
+					var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.ProductId);
+
+					if (product == null)
+					{
+						_logger.LogInformation("Unable find the product details");
+						return null;
+					}
+
+					_logger.LogInformation("Finding the product option");
+					var productOption = await _context.ProductOptions.FirstOrDefaultAsync(p => p.Id == request.Id && p.ProductId == request.ProductId);
+
+					if (productOption == null)
+					{
+						_logger.LogInformation("Unable find the product option");
+						return null;
+					}
+
+					_logger.LogInformation("Mapping DB Contest product option to product option DTO");
+					var productOptionDTO = _mapper.Map<ProductOption, ProductOptionDTO>(productOption);
+
+					_logger.LogInformation("Getting the product option - Success");
+					return Result<ProductOptionDTO>.Success(productOptionDTO);
 				}
-
-				_logger.LogInformation("Finding the product option");
-				var productOption = await _context.ProductOptions.FirstOrDefaultAsync(p => p.Id == request.Id && p.ProductId == request.ProductId);
-
-				if (productOption == null)
+				catch (Exception ex)
 				{
-					_logger.LogInformation("Unable find the product option");
-					return null;
+					_logger.LogError(ex, "Unhandle error occured");
+					return Result<ProductOptionDTO>.Failure("The request failed");
 				}
-
-				_logger.LogInformation("Mapping DB Contest product option to product option DTO");
-				var productOptionDTO = _mapper.Map<ProductOption, ProductOptionDTO>(productOption);
-
-				_logger.LogInformation("Getting the product option - Success");
-				return Result<ProductOptionDTO>.Success(productOptionDTO);
 			}
 		}
 	}

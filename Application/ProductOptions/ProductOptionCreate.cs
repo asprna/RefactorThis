@@ -49,36 +49,45 @@ namespace Application.ProductOptions
 
 			public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
 			{
-				_logger.LogInformation("Checking if the product exists");
-				var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.ProductId);
-
-				if (product == null)
+				try
 				{
-					_logger.LogInformation("Product does not exist");
-					return null;
+					_logger.LogInformation("Checking if the product exists");
+					var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.ProductId);
+
+					if (product == null)
+					{
+						_logger.LogInformation("Product does not exist");
+						return null;
+					}
+
+					//Check if product id is correct in the product option object.
+					if (request.ProductId != request.ProductOption.ProductId)
+					{
+						_logger.LogInformation("Requested product id should be same as the product id of the product option");
+						return Result<Unit>.Failure("Failed to create product option");
+					}
+
+					_logger.LogInformation("Adding the product option to the product");
+					_context.ProductOptions.Add(request.ProductOption);
+
+					_logger.LogInformation("Saving changes to DB");
+					var result = await _context.SaveChangesAsync() > 0;
+
+					if (!result)
+					{
+						_logger.LogInformation("Failed to create product option");
+						
+					}
+
+					_logger.LogInformation("Adding a new product option - Success");
+					return Result<Unit>.Success(Unit.Value);
 				}
-
-				//Check if product id is correct in the product option object.
-				if (request.ProductId != request.ProductOption.ProductId)
+				catch (Exception ex)
 				{
-					_logger.LogInformation("Requested product id should be same as the product id of the product option");
+					_logger.LogError(ex, "Unhandle error occured");
 					return Result<Unit>.Failure("Failed to create product option");
 				}
-
-				_logger.LogInformation("Adding the product option to the product");
-				_context.ProductOptions.Add(request.ProductOption);
-
-				_logger.LogInformation("Saving changes to DB");
-				var result = await _context.SaveChangesAsync() > 0;
-
-				if (!result) 
-				{
-					_logger.LogInformation("Failed to create product option");
-					return Result<Unit>.Failure("Failed to create product option"); 
-				}
-
-				_logger.LogInformation("Adding a new product option - Success");
-				return Result<Unit>.Success(Unit.Value);
+				
 			}
 		}
 	}

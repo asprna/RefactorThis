@@ -47,29 +47,38 @@ namespace Application.ProductOptions
 
 			public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
 			{
-				_logger.LogInformation("Checking if the product options exists");
-				var productOption = await _context.ProductOptions.FirstOrDefaultAsync(p => p.ProductId == request.ProductOption.ProductId && p.Id == request.Id);
-
-				if (productOption == null)
+				try
 				{
-					_logger.LogInformation("Unable to find the product");
-					return null;
+					_logger.LogInformation("Checking if the product options exists");
+					var productOption = await _context.ProductOptions.FirstOrDefaultAsync(p => p.ProductId == request.ProductOption.ProductId && p.Id == request.Id);
+
+					if (productOption == null)
+					{
+						_logger.LogInformation("Unable to find the product");
+						return null;
+					}
+
+					_logger.LogInformation("Mapping the product option in the request to the product option in the datacontext");
+					_mapper.Map(request.ProductOption, productOption);
+
+					_logger.LogInformation("Saving changes to DB");
+					var result = await _context.SaveChangesAsync() > 0;
+
+					if (!result)
+					{
+						_logger.LogInformation("Failed to edit product option");
+						return Result<Unit>.Failure("Failed to edit product option");
+					}
+
+					_logger.LogInformation("Editing the product option - Success");
+					return Result<Unit>.Success(Unit.Value);
 				}
-
-				_logger.LogInformation("Mapping the product option in the request to the product option in the datacontext");
-				_mapper.Map(request.ProductOption, productOption);
-
-				_logger.LogInformation("Saving changes to DB");
-				var result = await _context.SaveChangesAsync() > 0;
-
-				if (!result)
+				catch (Exception ex)
 				{
-					_logger.LogInformation("Failed to edit product option");
+					_logger.LogError(ex, "Unhandle error occured");
 					return Result<Unit>.Failure("Failed to edit product option");
 				}
-
-				_logger.LogInformation("Editing the product option - Success");
-				return Result<Unit>.Success(Unit.Value);
+				
 			}
 		}
 	}

@@ -33,29 +33,37 @@ namespace Application.ProductOptions
 
 			public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
 			{
-				_logger.LogInformation("Finding the correct product options");
-				var productOption = await _context.ProductOptions.FirstOrDefaultAsync(p => p.Id == request.Id && p.ProductId == request.ProductId);
-
-				if (productOption == null)
+				try
 				{
-					_logger.LogInformation("Unable to find the product option");
-					return null;
+					_logger.LogInformation("Finding the correct product options");
+					var productOption = await _context.ProductOptions.FirstOrDefaultAsync(p => p.Id == request.Id && p.ProductId == request.ProductId);
+
+					if (productOption == null)
+					{
+						_logger.LogInformation("Unable to find the product option");
+						return null;
+					}
+
+					_logger.LogInformation("Removing the product option from the data context");
+					_context.Remove(productOption);
+
+					_logger.LogInformation("Saving changes to DB");
+					var result = await _context.SaveChangesAsync() > 0;
+
+					if (!result)
+					{
+						_logger.LogInformation("Failed to delete the product option");
+						return Result<Unit>.Failure("Failed to delete the product option");
+					}
+
+					_logger.LogInformation("Deleting the product option - Success");
+					return Result<Unit>.Success(Unit.Value);
 				}
-
-				_logger.LogInformation("Removing the product option from the data context");
-				_context.Remove(productOption);
-
-				_logger.LogInformation("Saving changes to DB");
-				var result = await _context.SaveChangesAsync() > 0;
-
-				if (!result)
+				catch (Exception ex)
 				{
-					_logger.LogInformation("Failed to delete the product option");
+					_logger.LogError(ex, "Unhandle error occured");
 					return Result<Unit>.Failure("Failed to delete the product option");
 				}
-
-				_logger.LogInformation("Deleting the product option - Success");
-				return Result<Unit>.Success(Unit.Value);
 			}
 		}
 	}
