@@ -70,19 +70,34 @@ All models are specified in the `/Models` folder, but should conform to:
   ]
 }
 ```
-1. Update the .net framework
-	1. Upgraded to .net 5
-	2. Upgraded Sqlite package to latest 5.0.10
-	3. Added missing Newtonsoft package
-	4. Refactor the Startup.cs according to .net 5 standard
+# Code refactor stage by stage
+I have divided this project into a few phases, which are explained below.
 
-2. Added Integration Unit Test Suite to the project
+## Update the .net framework
+The project currently uses .net core 2.1 which is no longer supported by Microsoft [[Ref]](https://dotnet.microsoft.com/platform/support/policy/dotnet-core "[Ref]". Hence, I have  upgraded the .net framework to .net 5.
+1. Upgraded .net framework to .net 5
+2. Upgraded Sqlite package to latest 5.0.10
+3. Added missing Newtonsoft package
+4. Refactor the Startup.cs according to .net 5 standard
 
-3. Implemented Clean Architecture Pattern
+## Added Integration Test Suite to the project (TDD)
+I have implemented the integration tests before any code changes. By following TDD approch, the developer will be able to refactor the existing code and provide the same output as the old code.
 
-4. Added DataContext via EntityFramework - Database first model
-dotnet CLI command: dotnet ef dbcontext scaffold “Data source=../API/App_Data/products.db” Microsoft.EntityFrameworkCore.Sqlite —context DataContext —context-dir .\Persistence —output-dir ..\Domain —data-annotations —force -p .\Persistence -f
+## Implemented Clean Architecture Pattern
+The clean architechture pattern allows to seperate the project into unique layers. There are many advantages of this pattern [[Ref]](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html "[Ref]") . Overtime, when new features are added to this project, this pattern will certainly help developers to write a clean code and it will be easy for them to debug.
 
-5. Implemeted CQRS + Mediator pattern
+## Added EntityFramework Support - Database first model
+As this simple CURD application does not use complex queries, EntityFramework is the best candidate for this project. EntityFramework provides greater support for Unit Testing. The effort to migrate from SQlite to SQL server or any other database server using EntityFramework is very minimal. The other option is to use Dapper but it is not as supportive with unit tests.
 
-6. Refactor API
+`dotnet CLI command: dotnet ef dbcontext scaffold “Data source=../API/App_Data/products.db” Microsoft.EntityFrameworkCore.Sqlite —context DataContext —context-dir .\Persistence —output-dir ..\Domain —data-annotations —force -p .\Persistence -f`
+
+## Implemeted CQRS Pattern using Mediator
+The CQRS allows developers to seperate queries and commands. This pattern allows developers to write clean code as well as thin controllers in the API project. Another benefit is, if a need arises to configure two database, one for the read (read optimised database) and one for the write (write optimised database),  it can be done using this pattern with ease.
+
+## Refactor existing API
+After all the necessary ground work mentioned above, I started refactoring the existing API. I have also added unit tests for each of the components. Both Unit and Integration tests covers 95% of the code base.
+
+# Improvement Suggestions
+This simple database can be normalised using the following methods.
+1. Adding primary keys and foreign keys to Product and ProductOption tables.
+2. Database performance can be improved by adding Cluster/Non-Cluster indexes.
