@@ -1,0 +1,307 @@
+{
+	"info": {
+		"_postman_id": "05d330a8-4cf0-4bfe-aaf7-a9d109d0beab",
+		"name": "Xero",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Products",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5001/api/products",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n            \"id\": \"{{$guid}}\",\r\n            \"name\": \"Apple iPhone 10\",\r\n            \"description\": \"Apple Phone\",\r\n            \"price\": 1299.99,\r\n            \"deliveryPrice\": 15.99\r\n        }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/products",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Product",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"79f38b91-9dd1-4da6-ba3c-94e2b5e03c34\",\r\n    \"name\": \"Apple iPhone 10\",\r\n    \"description\": \"My Test\",\r\n    \"price\": 1299.99,\r\n    \"deliveryPrice\": 20.00\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/products/79f38b91-9dd1-4da6-ba3c-94e2b5e03c34",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"products",
+						"79f38b91-9dd1-4da6-ba3c-94e2b5e03c34"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Products",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5001/api/products",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Products By Product Name",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5001/api/products?name=Samsung",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"products"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Samsung"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Products By Product Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5001/api/products/8f2e9176-35ee-4f0a-ae55-83023d2db1a3",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"products",
+						"8f2e9176-35ee-4f0a-ae55-83023d2db1a3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Product",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5001/api/products/79f38b91-9dd1-4da6-ba3c-94e2b5e03c34",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"products",
+						"79f38b91-9dd1-4da6-ba3c-94e2b5e03c34"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Product Options",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5001/api/products/8f2e9176-35ee-4f0a-ae55-83023d2db1a3/options",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"products",
+						"8f2e9176-35ee-4f0a-ae55-83023d2db1a3",
+						"options"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Gert Product Option",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5001/api/products/8f2e9176-35ee-4f0a-ae55-83023d2db1a3/options/0643ccf0-ab00-4862-b3c5-40e2731abcc9",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"products",
+						"8f2e9176-35ee-4f0a-ae55-83023d2db1a3",
+						"options",
+						"0643ccf0-ab00-4862-b3c5-40e2731abcc9"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Product Option",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"{{$guid}}\",\r\n    \"productId\": \"8f2e9176-35ee-4f0a-ae55-83023d2db1a3\",\r\n    \"name\": \"Apple iPhone Test\",\r\n    \"description\": \"Apple Phone 11\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/products/8f2e9176-35ee-4f0a-ae55-83023d2db1a3/options",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"products",
+						"8f2e9176-35ee-4f0a-ae55-83023d2db1a3",
+						"options"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Product Option",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"b979dd0c-570d-4c7b-833c-b0dc2336e7c4\",\r\n    \"productId\": \"8f2e9176-35ee-4f0a-ae55-83023d2db1a3\",\r\n    \"name\": \"Apple iPhone 13\",\r\n    \"description\": \"Apple Phone 11\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/products/8f2e9176-35ee-4f0a-ae55-83023d2db1a3/options/b979dd0c-570d-4c7b-833c-b0dc2336e7c4",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"products",
+						"8f2e9176-35ee-4f0a-ae55-83023d2db1a3",
+						"options",
+						"b979dd0c-570d-4c7b-833c-b0dc2336e7c4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Product Option",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:5001/api/products/8f2e9176-35ee-4f0a-ae55-83023d2db1a3/options/f792094b-395c-40eb-b340-4f6a4d9a9772",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"products",
+						"8f2e9176-35ee-4f0a-ae55-83023d2db1a3",
+						"options",
+						"f792094b-395c-40eb-b340-4f6a4d9a9772"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
