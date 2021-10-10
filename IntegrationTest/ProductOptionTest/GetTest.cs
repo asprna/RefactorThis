@@ -9,6 +9,7 @@ using Domain;
 using AutoMapper;
 using Application.Helper;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace IntegrationTest.ProductOptionTest
 {
@@ -37,19 +38,21 @@ namespace IntegrationTest.ProductOptionTest
 		/// <param name="count">Expected number of options count.</param>
 		/// <returns></returns>
 		[Theory]
-		[InlineData("8F2E9176-35EE-4F0A-AE55-83023D2DB1A3", 2)]
-		[InlineData("DE1287C0-4B15-4A7B-9D8A-DD21B3CAFEC3", 3)]
-		public async Task GetOptions_AllProductsOptions_AllOptionsReturnedSuccessful(string id, int count)
+		[InlineData("8F2E9176-35EE-4F0A-AE55-83023D2DB1A3")]
+		[InlineData("DE1287C0-4B15-4A7B-9D8A-DD21B3CAFEC3")]
+		public async Task GetOptions_AllProductsOptions_AllOptionsReturnedSuccessful(string id)
 		{
 			//Arrange
+			var expectedProductOption = helper.SeedTestData.ProductOptions.Where(p => p.ProductId == Guid.Parse(id)).ToList();
+			var expectedProductOptionDTO = _mapper.Map<List<ProductOption>, List<ProductOptionDTO>>(expectedProductOption);
 
 			//Act
 			var response = await TestClient.GetAsync(helper.ApiRoutes.Products.GetOption.Replace("{id}", id));
-			var productsOption = JsonConvert.DeserializeObject<ProductOptions>(await response.Content.ReadAsStringAsync());
+			var productsOption = JsonConvert.DeserializeObject<ProductOptionsDTO>(await response.Content.ReadAsStringAsync());
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.OK);
-			productsOption.Items.Count.Should().Be(count);
+			productsOption.Items.Should().Contain(expectedProductOptionDTO);
 		}
 
 		/// <summary>
@@ -81,7 +84,7 @@ namespace IntegrationTest.ProductOptionTest
 		[Theory]
 		[InlineData("8F2E9176-35EE-4F0A-AE55-83023D2DB1A3", "0643CCF0-AB00-4862-B3C5-40E2731ABCC9")]
 		[InlineData("DE1287C0-4B15-4A7B-9D8A-DD21B3CAFEC3", "5C2996AB-54AD-4999-92D2-89245682D534")]
-		public async Task GetOption_ValidProductIDAndOptionID_ProductOptionFoundSuccessful(string productId, string optionId)
+		public async Task GetOption_ValidProductIDAndOptionID_ProductOptionFoundSuccess(string productId, string optionId)
 		{
 			//Arrage
 			var productOptionExpected = helper.SeedTestData.ProductOptions.Where(p => p.Id == Guid.Parse(optionId)).FirstOrDefault();

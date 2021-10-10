@@ -17,7 +17,6 @@ namespace UnitTest.Application.ProductTest
 		private readonly Delete.Handler sut;
 		private readonly Details.Handler sutDetail;
 		private readonly Mock<ILogger<MockDb>> _logger = new Mock<ILogger<MockDb>>();
-		private readonly Mock<DataContext> _context = new Mock<DataContext>();
 
 		public DeleteTest()
 		{
@@ -27,7 +26,6 @@ namespace UnitTest.Application.ProductTest
 
 		/// <summary>
 		/// The application should Delete the product correctly when the product is valid.
-		/// Endpoint: POST /products
 		/// </summary>
 		[Fact]
 		public void Handler_ValidProduct_EditSuccess()
@@ -48,7 +46,6 @@ namespace UnitTest.Application.ProductTest
 
 		/// <summary>
 		/// The application should return null when it fails to find the product.
-		/// Endpoint: POST /products
 		/// </summary>
 		[Fact]
 		public void Handler_ProductIdIsWrong_ReturnNull()

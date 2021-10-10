@@ -26,9 +26,11 @@ namespace IntegrationTest.ProductOptionTest
 
 			//Act
 			var response = await TestClient.DeleteAsync(helper.ApiRoutes.Products.GetOptionId.Replace("{id}", productOption.ProductId.ToString()).Replace("{optionId}", productOption.Id.ToString()));
+			var responseProductsOption = await TestClient.GetAsync(helper.ApiRoutes.Products.GetOptionId.Replace("{id}", productOption.ProductId.ToString()).Replace("{optionId}", productOption.Id.ToString()));
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.OK);
+			responseProductsOption.StatusCode.Should().Be(HttpStatusCode.NotFound);
 		}
 
 		/// <summary>

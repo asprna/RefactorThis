@@ -26,7 +26,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Ok response when it successfully adds the product.
-		/// Endpoint: POST /products
 		/// </summary>
 		[Fact]
 		public void Post_ValidProduct_OkResponse()
@@ -55,7 +54,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return bad request response when it fails to add the product.
-		/// Endpoint: POST /products
 		/// </summary>
 		[Fact]
 		public void Post_FailedToAdd_BadRequestResponse()
@@ -84,7 +82,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Ok response when it successfully adds the product option.
-		/// Endpoint: POST /products/{id}/options
 		/// </summary>
 		[Fact]
 		public void CreateOption_ValidProductOption_OkResponse()
@@ -112,7 +109,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Not Found response when the product id is invalid.
-		/// Endpoint: POST /products/{id}/options
 		/// </summary>
 		[Fact]
 		public void CreateOption_InValidProductId_NoFoundResponse()
@@ -140,7 +136,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Bad response when Mediator failed.
-		/// Endpoint: POST /products/{id}/options
 		/// </summary>
 		[Fact]
 		public void CreateOption_MediatorFailed_BadResponse()

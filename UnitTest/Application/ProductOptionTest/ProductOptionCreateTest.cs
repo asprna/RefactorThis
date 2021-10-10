@@ -17,7 +17,6 @@ namespace UnitTest.Application.ProductOptionTest
 	{
 		private readonly ProductOptionCreate.Handler sut;
 		private readonly Mock<ILogger<MockDb>> _logger = new Mock<ILogger<MockDb>>();
-		private readonly Mock<DataContext> _context = new Mock<DataContext>();
 
 		public ProductOptionCreateTest()
 		{

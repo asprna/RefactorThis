@@ -16,7 +16,6 @@ namespace UnitTest.Application.ProductOptionTest
 	{
 		private readonly ProductOptionDelete.Handler sut;
 		private readonly Mock<ILogger<MockDb>> _logger = new Mock<ILogger<MockDb>>();
-		private readonly Mock<DataContext> _context = new Mock<DataContext>();
 
 		public ProductOptionDeleteTest()
 		{

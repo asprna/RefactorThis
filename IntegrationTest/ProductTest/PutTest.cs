@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Net.Http.Json;
 using Domain;
 using Xunit;
+using Newtonsoft.Json;
 
 namespace IntegrationTest.ProductTest
 {
@@ -41,9 +42,12 @@ namespace IntegrationTest.ProductTest
 
 			//Act
 			var response = await TestClient.PutAsync(helper.ApiRoutes.Products.ProducIdUrl.Replace("{id}", id), content);
+			var getProductResponse = await TestClient.GetAsync(helper.ApiRoutes.Products.ProducIdUrl.Replace("{id}", product.Id.ToString()));
+			var newProduct = JsonConvert.DeserializeObject<Product>(await getProductResponse.Content.ReadAsStringAsync());
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.OK);
+			newProduct.Should().BeEquivalentTo(expectedProduct);
 		}
 
 		/// <summary>

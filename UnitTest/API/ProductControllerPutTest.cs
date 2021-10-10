@@ -27,7 +27,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Ok response when it successfully update the product.
-		/// Endpoint: POST /products
 		/// </summary>
 		[Fact]
 		public void Put_ValidProduct_OkResponse()
@@ -59,7 +58,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return bad request response when it fails to update the product.
-		/// Endpoint: POST /products
 		/// </summary>
 		[Fact]
 		public void Post_FailedToUpdate_BadRequestResponse()
@@ -91,7 +89,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return not found response when it fails to find the product.
-		/// Endpoint: POST /products
 		/// </summary>
 		[Fact]
 		public void Post_ProductIdIsWrong_NotFoundResponse()
@@ -124,7 +121,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Ok response when it successfully update the product option.
-		/// Endpoint: PUT /products/{id}/options/{optionId}
 		/// </summary>
 		[Fact]
 		public void UpdateOption_UpdateSuccess_OkResponse()
@@ -154,7 +150,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Not Found response when Mediator returns null.
-		/// Endpoint: PUT /products/{id}/options/{optionId}
 		/// </summary>
 		[Fact]
 		public void UpdateOption_MediatorReturnNull_NotFoundResponse()
@@ -184,7 +179,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Bad Request response when Mediator returns an error.
-		/// Endpoint: PUT /products/{id}/options/{optionId}
 		/// </summary>
 		[Fact]
 		public void UpdateOption_MediatorReturnError_BadRequestResponse()

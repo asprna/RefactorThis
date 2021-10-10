@@ -2,6 +2,7 @@
 using Application.Products;
 using Domain;
 using FluentAssertions;
+using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Persistence;
@@ -43,21 +44,18 @@ namespace UnitTest.Application.ProductTest
 			};
 
 			var request = new Create.Command { Product = product };
-			var requestProduct = new Details.Query { Id = product.Id };
 
-			var expectedResult = Result<Product>.Success(product);
+			var expectedResult = Result<Unit>.Success(Unit.Value);
 
 			//Act
 			var result = sut.Handle(request, CancellationToken.None).Result;
-			var newProduct = sutDetail.Handle(requestProduct, CancellationToken.None).Result;
 
 			//Assert
-			result.IsSuccess.Should().BeTrue();
-			newProduct.Value.Should().Be(product);
+			result.Should().BeEquivalentTo(expectedResult);
 		}
 
 		/// <summary>
-		/// The application should aerror when failed to add the product
+		/// The application should return an error when failed to add the product
 		/// </summary>
 		[Fact]
 		public void Handler_InsertFail_ErrorReturn()

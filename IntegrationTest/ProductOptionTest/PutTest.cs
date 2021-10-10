@@ -62,7 +62,7 @@ namespace IntegrationTest.ProductOptionTest
 			//Act
 			var response = await TestClient.PutAsync(helper.ApiRoutes.Products.GetOptionId.Replace("{id}", productId).Replace("{optionId}", optionId), content);
 			var responseProductsOption = await TestClient.GetAsync(helper.ApiRoutes.Products.GetOptionId.Replace("{id}", productId).Replace("{optionId}", optionId));
-			var updatedProductsOption = JsonConvert.DeserializeObject<ProductOption>(await responseProductsOption.Content.ReadAsStringAsync());
+			var updatedProductsOption = JsonConvert.DeserializeObject<ProductOptionDTO>(await responseProductsOption.Content.ReadAsStringAsync());
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.OK);

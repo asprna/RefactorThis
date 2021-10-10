@@ -24,7 +24,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Ok response when it successfully delete the product.
-		/// Endpoint: POST /products
 		/// </summary>
 		[Fact]
 		public void Delete_ValidProduct_OkResponse()
@@ -46,7 +45,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return bad request response when it fails to delete the product.
-		/// Endpoint: POST /products
 		/// </summary>
 		[Fact]
 		public void Delete_FailedToDelete_BadRequestResponse()
@@ -68,7 +66,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return not found response when it fails to find the product.
-		/// Endpoint: POST /products
 		/// </summary>
 		[Fact]
 		public void Delete_ProductIdIsWrong_NotFoundResponse()
@@ -90,7 +87,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Ok response when it successfully delete the product option.
-		/// Endpoint: DELETE /products/{id}/options/{optionId}
 		/// </summary>
 		[Fact]
 		public void DeleteOption_ValidProductOption_OkResponse()
@@ -113,7 +109,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return bad request response when it fails to delete the product.
-		/// Endpoint: DELETE /products/{id}/options/{optionId}
 		/// </summary>
 		[Fact]
 		public void DeleteOption_FailedToDelete_BadRequestResponse()
@@ -122,7 +117,7 @@ namespace UnitTest.API
 			var productId = "DE1287C0-4B15-4A7B-9D8A-DD21B3CAFEC3";
 			var id = "9AE6F477-A010-4EC9-B6A8-92A85D6C5F03";
 
-			var result = Result<Unit>.Failure("Failed to create product");
+			var result = Result<Unit>.Failure("Failed to create product option");
 
 			mediator.Setup(x => x.Send(It.Is<ProductOptionDelete.Command>(y => y.ProductId == Guid.Parse(productId) && y.Id == Guid.Parse(id)), It.IsAny<CancellationToken>())).ReturnsAsync(result);
 
@@ -136,7 +131,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return not found response when it fails to find the product.
-		/// Endpoint: DELETE /products/{id}/options/{optionId}
 		/// </summary>
 		[Fact]
 		public void DeleteOption_ProductIdIsWrong_NotFoundResponse()

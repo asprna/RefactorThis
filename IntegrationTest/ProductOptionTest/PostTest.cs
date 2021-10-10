@@ -89,7 +89,7 @@ namespace IntegrationTest.ProductOptionTest
 		}
 
 		/// <summary>
-		/// Controller should not create the option when the given product ID is invalid.
+		/// Controller should not create the option when the given product IDs is mismatch.
 		/// Endpoint: POST /products/{id}/options
 		/// </summary>
 		/// <returns></returns>

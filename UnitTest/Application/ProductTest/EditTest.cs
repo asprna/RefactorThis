@@ -20,8 +20,6 @@ namespace UnitTest.Application.ProductTest
 		private readonly Edit.Handler sut;
 		private readonly Details.Handler sutDetail;
 		private readonly Mock<ILogger<MockDb>> _logger = new Mock<ILogger<MockDb>>();
-		private readonly Mock<DataContext> _context = new Mock<DataContext>();
-		//private readonly Mock<IMapper> _mapper = new Mock<IMapper>();
 
 		public EditTest()
 		{
@@ -39,7 +37,6 @@ namespace UnitTest.Application.ProductTest
 
 		/// <summary>
 		/// The application should update the product correctly when the product is valid.
-		/// Endpoint: POST /products
 		/// </summary>
 		[Fact]
 		public void Handler_ValidProduct_EditSuccess()
@@ -58,22 +55,18 @@ namespace UnitTest.Application.ProductTest
 			};
 
 			var request = new Edit.Command { Product = newProduct, Id = Guid.Parse(id) };
-			var requestProduct = new Details.Query { Id = product.Id };
 
 			var expectedResult = Result<Unit>.Success(Unit.Value);
 
 			//Act
 			var result = sut.Handle(request, CancellationToken.None).Result;
-			var updatedProduct = sutDetail.Handle(requestProduct, CancellationToken.None).Result;
 
 			//Assert
 			result.Should().BeEquivalentTo(expectedResult);
-			updatedProduct.Value.Should().Be(product);
 		}
 
 		/// <summary>
 		/// The application should return error when it fails to update the product.
-		/// Endpoint: POST /products
 		/// </summary>
 		[Fact]
 		public void Handler_FailedToUpdate_ErrorReturned()
@@ -96,7 +89,6 @@ namespace UnitTest.Application.ProductTest
 
 		/// <summary>
 		/// The application should return null when it fails to find the product.
-		/// Endpoint: POST /products
 		/// </summary>
 		[Fact]
 		public void Handler_ProductIdIsWrong_NotFoundResponse()

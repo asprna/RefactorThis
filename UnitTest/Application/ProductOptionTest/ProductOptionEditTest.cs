@@ -19,8 +19,6 @@ namespace UnitTest.Application.ProductOptionTest
 	{
 		private readonly ProductOptionEdit.Handler sut;
 		private readonly Mock<ILogger<MockDb>> _logger = new Mock<ILogger<MockDb>>();
-		private readonly Mock<DataContext> _context = new Mock<DataContext>();
-
 		public ProductOptionEditTest()
 		{
 			var mockDb = new MockDb(_logger.Object);
@@ -36,7 +34,6 @@ namespace UnitTest.Application.ProductOptionTest
 
 		/// <summary>
 		/// The application should update the product option correctly when the product is valid.
-		/// Endpoint: POST /products
 		/// </summary>
 		[Fact]
 		public void Handler_ValidProductOption_EditSuccess()
@@ -65,7 +62,6 @@ namespace UnitTest.Application.ProductOptionTest
 
 		/// <summary>
 		/// The application should return an error when the product option is not found.
-		/// Endpoint: POST /products
 		/// </summary>
 		[Fact]
 		public void Handler_InvalidProductOption_ReturnNull()
@@ -94,7 +90,6 @@ namespace UnitTest.Application.ProductOptionTest
 
 		/// <summary>
 		/// The application should return bad request when failed to update the product option.
-		/// Endpoint: POST /products
 		/// </summary>
 		[Fact]
 		public void Handler_FailedToUpdate_ReturnError()

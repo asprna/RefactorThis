@@ -37,10 +37,9 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Ok response when it finds the products.
-		/// Endpoint: GET /products
 		/// </summary>
 		[Fact]
-		public void Get_NoParameter_OkResponseWithProduct()
+		public void Get_NoParameter_OkResponse()
 		{
 			//Arrange
 			var products = new Products
@@ -58,13 +57,10 @@ namespace UnitTest.API
 			//Assert
 			mediator.Verify(x => x.Send(It.Is<List.Query>(y => y.Name == null), It.IsAny<CancellationToken>()));
 			var okResult = actionResult.Should().BeOfType<OkObjectResult>().Subject;
-			var productReturned = okResult.Value.Should().BeAssignableTo<Products>().Subject;
-			productReturned.Items.Count().Should().Be(products.Items.Count());
 		}
 
 		/// <summary>
 		/// Controller should return Ok response with no products when it cannot find the products.
-		/// Endpoint: GET /products
 		/// </summary>
 		[Fact]
 		public void Get_ProductsListNull_NotFoundResponse()
@@ -88,7 +84,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Bad Request response when the request fails.
-		/// Endpoint: GET /products
 		/// </summary>
 		[Fact]
 		public void Get_MediatorFailed_BadRequestResponse()
@@ -110,7 +105,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Ok response when it finds the products by name.
-		/// Endpoint: GET /products?name={name}
 		/// </summary>
 		[Fact]
 		public void Get_FilterByName_OkResponseWithProduct()
@@ -138,10 +132,9 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Ok response with no products when the invalid name provided.
-		/// Endpoint: GET /products?name={name}
 		/// </summary>
 		[Fact]
-		public void Get_FilterInvalidByName_OkResponseWithNoProduct()
+		public void Get_FilterByInvalidName_OkResponseWithNoProduct()
 		{
 			//Arrange
 			var name = "NoProduct";
@@ -165,31 +158,7 @@ namespace UnitTest.API
 		}
 
 		/// <summary>
-		/// Controller should return Bad Request response when the request fails.
-		/// Endpoint: GET /products?name={name}
-		/// </summary>
-		[Fact]
-		public void Get_MediatorFailedWhileFilteringProductName_BadRequestResponse()
-		{
-			//Arrange
-			var name = "Apple";
-			var error = "Unit Test Failed";
-			var result = Result<Domain.Products>.Failure(error);
-
-			mediator.Setup(x => x.Send(It.Is<List.Query>(y => y.Name == name), It.IsAny<CancellationToken>())).ReturnsAsync(result);
-
-			//Act
-			var actionResult = sut.Get(name).Result;
-
-			//Assert
-			mediator.Verify(x => x.Send(It.Is<List.Query>(y => y.Name == name), It.IsAny<CancellationToken>()));
-			var errorReturned = actionResult.Should().BeOfType<BadRequestObjectResult>().Subject;
-			errorReturned.Value.Should().Be(error);
-		}
-
-		/// <summary>
 		/// Controller should return Ok response when it finds the product by its Id.
-		/// Endpoint: GET /products/{id}
 		/// </summary>
 		[Fact]
 		public void Get_ValidId_OkResponseWithProduct()
@@ -213,7 +182,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Ok response with no product when it cannot find the products by Id.
-		/// Endpoint: GET /products/{id}
 		/// </summary>
 		[Fact]
 		public void Get_InvalidId_NotFoundResponse()
@@ -222,7 +190,7 @@ namespace UnitTest.API
 			var id = "8F2E9176-35EE-4F0A-AE55-83023D2DB133";
 			Product product = null;
 
-			var result = Result<Domain.Product>.Success(product);
+			Result<Domain.Product> result = null;
 
 			mediator.Setup(x => x.Send(It.Is<Details.Query>(y => y.Id == Guid.Parse(id)), It.IsAny<CancellationToken>())).ReturnsAsync(result);
 
@@ -236,7 +204,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Ok response when it finds the product options for the given product id.
-		/// Endpoint: GET /products/{id}/options
 		/// </summary>
 		[Fact]
 		public void GetOptions_ValidId_OkResponse()
@@ -259,7 +226,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return not found response when it cannot find the products by Id.
-		/// Endpoint: GET /products/{id}
 		/// </summary>
 		[Fact]
 		public void GetOptions_InvalidId_NotFoundResponse()
@@ -281,7 +247,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Ok response when it finds the product option details for the given product id and option id.
-		/// Endpoint: GET /products/{id}/options/{optionId}
 		/// </summary>
 		[Fact]
 		public void GetOptions_ValidPtoductIdAndValidOptionId_OkResponse()
@@ -305,7 +270,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Not Found response when the given product id is invalid.
-		/// Endpoint: GET /products/{id}/options/{optionId}
 		/// </summary>
 		[Fact]
 		public void GetOptions_InvalidPtoductIdAndValidOptionId_NotFoundResponse()
@@ -327,7 +291,6 @@ namespace UnitTest.API
 
 		/// <summary>
 		/// Controller should return Not Found response when the given product option id is invalid.
-		/// Endpoint: GET /products/{id}/options/{optionId}
 		/// </summary>
 		[Fact]
 		public void GetOptions_ValidPtoductIdAndInvalidOptionId_NotFoundResponse()

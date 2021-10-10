@@ -43,7 +43,7 @@ namespace IntegrationTest.ProductTest
 		/// </summary>
 		/// <returns></returns>
 		[Fact]
-		public async Task Get_ValidProductName_ProductFoundSuccessful()
+		public async Task Get_ValidProductName_ProductFoundSuccess()
 		{
 			//Arrange
 			var expectedProducts = helper.SeedTestData.Products.Where(p => p.Name.Contains("Apple")).ToList();
@@ -114,7 +114,6 @@ namespace IntegrationTest.ProductTest
 
 			//Act
 			var response = await TestClient.GetAsync(helper.ApiRoutes.Products.ProducIdUrl.Replace("{id}", id));
-			var result = await response.Content.ReadAsStringAsync();
 
 			//Assert
 			response.StatusCode.Should().Be(HttpStatusCode.NotFound);
