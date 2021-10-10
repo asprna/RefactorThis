@@ -53,7 +53,6 @@ namespace Application.Products
 						items = await _context.Products.ToListAsync();
 					}
 
-					throw new Exception();
 					_logger.LogInformation("Adding all products to Products object");
 					var products = new Domain.Products
 					{
