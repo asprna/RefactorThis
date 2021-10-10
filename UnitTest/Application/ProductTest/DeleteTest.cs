@@ -17,11 +17,12 @@ namespace UnitTest.Application.ProductTest
 		private readonly Delete.Handler sut;
 		private readonly Details.Handler sutDetail;
 		private readonly Mock<ILogger<MockDb>> _logger = new Mock<ILogger<MockDb>>();
+		private readonly Mock<ILogger<Delete.Handler>> _loggerHandler = new Mock<ILogger<Delete.Handler>>();
 
 		public DeleteTest()
 		{
 			var mockDb = new MockDb(_logger.Object);
-			sut = new Delete.Handler(mockDb.GetTestDbContext());
+			sut = new Delete.Handler(mockDb.GetTestDbContext(), _loggerHandler.Object);
 		}
 
 		/// <summary>

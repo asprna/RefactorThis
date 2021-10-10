@@ -19,12 +19,14 @@ namespace UnitTest.Application.ProductTest
 		private readonly Details.Handler sutDetail;
 		private readonly Mock<ILogger<MockDb>> _logger = new Mock<ILogger<MockDb>>();
 		private readonly Mock<DataContext> _context = new Mock<DataContext>();
+		private readonly Mock<ILogger<Create.Handler>> _loggerCreateHandler = new Mock<ILogger<Create.Handler>>();
+		private readonly Mock<ILogger<Details.Handler>> _loggerDetailsHandler = new Mock<ILogger<Details.Handler>>();
 
 		public CreateTest()
 		{
 			var mockDb = new MockDb(_logger.Object);
-			sut = new Create.Handler(mockDb.GetTestDbContext());
-			sutDetail = new Details.Handler(mockDb.GetTestDbContext());
+			sut = new Create.Handler(mockDb.GetTestDbContext(), _loggerCreateHandler.Object);
+			sutDetail = new Details.Handler(mockDb.GetTestDbContext(), _loggerDetailsHandler.Object);
 		}
 
 		/// <summary>
@@ -73,7 +75,7 @@ namespace UnitTest.Application.ProductTest
 			var request = new Create.Command { Product = product };
 
 			//Mocking the Datacontext
-			var sutDataContext = new Create.Handler(_context.Object);
+			var sutDataContext = new Create.Handler(_context.Object, _loggerCreateHandler.Object);
 			_context.Setup(x => x.Products.Add(It.IsAny<Product>()));
 			_context.Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(-1);
 

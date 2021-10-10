@@ -2,6 +2,7 @@
 using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Persistence;
 using System;
 using System.Threading;
@@ -22,22 +23,26 @@ namespace Application.Products
 		public class Handler : IRequestHandler<Query, Result<Product>>
 		{
 			private readonly DataContext _context;
+			private readonly ILogger<Handler> _logger;
 
-			public Handler(DataContext context)
+			public Handler(DataContext context, ILogger<Handler> logger)
 			{
 				_context = context;
+				_logger = logger;
 			}
 
 			public async Task<Result<Product>> Handle(Query request, CancellationToken cancellationToken)
 			{
-				//Find the products
+				_logger.LogInformation("Find the correct product");
 				var product =  await _context.Products.FirstOrDefaultAsync(p => p.Id == request.Id);
 
 				if(product == null)
 				{
+					_logger.LogInformation("Unable find the product");
 					return null;
 				}
 
+				_logger.LogInformation("Getting product details - Success");
 				return Result<Product>.Success(product);
 			}
 		}

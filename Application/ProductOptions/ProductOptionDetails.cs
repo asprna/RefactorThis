@@ -3,6 +3,7 @@ using AutoMapper;
 using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Persistence;
 using System;
 using System.Threading;
@@ -25,34 +26,39 @@ namespace Application.ProductOptions
 		{
 			private readonly DataContext _context;
 			private readonly IMapper _mapper;
+			private readonly ILogger<Handler> _logger;
 
-			public Handler(DataContext context, IMapper mapper)
+			public Handler(DataContext context, IMapper mapper, ILogger<Handler> logger)
 			{
 				_context = context;
 				_mapper = mapper;
+				_logger = logger;
 			}
 
 			public async Task<Result<ProductOptionDTO>> Handle(Query request, CancellationToken cancellationToken)
 			{
-				//Find the product
+				_logger.LogInformation("Checking if the product exists");
 				var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.ProductId);
 
 				if (product == null)
 				{
+					_logger.LogInformation("Unable find the product details");
 					return null;
 				}
 
-				//Find the product option
+				_logger.LogInformation("Finding the product option");
 				var productOption = await _context.ProductOptions.FirstOrDefaultAsync(p => p.Id == request.Id && p.ProductId == request.ProductId);
 
 				if (productOption == null)
 				{
+					_logger.LogInformation("Unable find the product option");
 					return null;
 				}
 
-				//Map product option to product option DTO
+				_logger.LogInformation("Mapping DB Contest product option to product option DTO");
 				var productOptionDTO = _mapper.Map<ProductOption, ProductOptionDTO>(productOption);
 
+				_logger.LogInformation("Getting the product option - Success");
 				return Result<ProductOptionDTO>.Success(productOptionDTO);
 			}
 		}

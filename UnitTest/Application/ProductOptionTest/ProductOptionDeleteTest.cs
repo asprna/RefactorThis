@@ -16,11 +16,12 @@ namespace UnitTest.Application.ProductOptionTest
 	{
 		private readonly ProductOptionDelete.Handler sut;
 		private readonly Mock<ILogger<MockDb>> _logger = new Mock<ILogger<MockDb>>();
+		private readonly Mock<ILogger<ProductOptionDelete.Handler>> _loggerHandler = new Mock<ILogger<ProductOptionDelete.Handler>>();
 
 		public ProductOptionDeleteTest()
 		{
 			var mockDb = new MockDb(_logger.Object);
-			sut = new ProductOptionDelete.Handler(mockDb.GetTestDbContext());
+			sut = new ProductOptionDelete.Handler(mockDb.GetTestDbContext(), _loggerHandler.Object);
 		}
 
 		/// <summary>

@@ -20,6 +20,8 @@ namespace UnitTest.Application.ProductTest
 		private readonly Edit.Handler sut;
 		private readonly Details.Handler sutDetail;
 		private readonly Mock<ILogger<MockDb>> _logger = new Mock<ILogger<MockDb>>();
+		private readonly Mock<ILogger<Edit.Handler>> _loggerEditHandler = new Mock<ILogger<Edit.Handler>>();
+		private readonly Mock<ILogger<Details.Handler>> _loggerDetailsHandler = new Mock<ILogger<Details.Handler>>();
 
 		public EditTest()
 		{
@@ -31,8 +33,8 @@ namespace UnitTest.Application.ProductTest
 
 			IMapper mapper = mappingConfig.CreateMapper();
 
-			sut = new Edit.Handler(mockDb.GetTestDbContext(), mapper);
-			sutDetail = new Details.Handler(mockDb.GetTestDbContext());
+			sut = new Edit.Handler(mockDb.GetTestDbContext(), mapper, _loggerEditHandler.Object);
+			sutDetail = new Details.Handler(mockDb.GetTestDbContext(), _loggerDetailsHandler.Object);
 		}
 
 		/// <summary>

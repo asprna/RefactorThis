@@ -19,6 +19,7 @@ namespace UnitTest.Application.ProductOptionTest
 	{
 		private readonly ProductOptionEdit.Handler sut;
 		private readonly Mock<ILogger<MockDb>> _logger = new Mock<ILogger<MockDb>>();
+		private readonly Mock<ILogger<ProductOptionEdit.Handler>> _loggerHandler = new Mock<ILogger<ProductOptionEdit.Handler>>();
 		public ProductOptionEditTest()
 		{
 			var mockDb = new MockDb(_logger.Object);
@@ -29,7 +30,7 @@ namespace UnitTest.Application.ProductOptionTest
 
 			IMapper mapper = mappingConfig.CreateMapper();
 
-			sut = new ProductOptionEdit.Handler(mockDb.GetTestDbContext(), mapper);
+			sut = new ProductOptionEdit.Handler(mockDb.GetTestDbContext(), mapper, _loggerHandler.Object);
 		}
 
 		/// <summary>

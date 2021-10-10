@@ -3,6 +3,7 @@ using Domain;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Persistence;
 using System;
 using System.Threading;
@@ -38,37 +39,45 @@ namespace Application.ProductOptions
 		public class Handler : IRequestHandler<Command, Result<Unit>>
 		{
 			private readonly DataContext _context;
+			private readonly ILogger<Handler> _logger;
 
-			public Handler(DataContext context)
+			public Handler(DataContext context, ILogger<Handler> logger)
 			{
 				_context = context;
+				_logger = logger;
 			}
 
 			public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
 			{
-				//Find the product
+				_logger.LogInformation("Checking if the product exists");
 				var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.ProductId);
 
 				if (product == null)
 				{
+					_logger.LogInformation("Product does not exist");
 					return null;
 				}
 
 				//Check if product id is correct in the product option object.
 				if (request.ProductId != request.ProductOption.ProductId)
 				{
+					_logger.LogInformation("Requested product id should be same as the product id of the product option");
 					return Result<Unit>.Failure("Failed to create product option");
 				}
 
-				//Add the product option
+				_logger.LogInformation("Adding the product option to the product");
 				_context.ProductOptions.Add(request.ProductOption);
 
-				//Save changes to DB
+				_logger.LogInformation("Saving changes to DB");
 				var result = await _context.SaveChangesAsync() > 0;
 
-				//Validate the DB action
-				if (!result) return Result<Unit>.Failure("Failed to create product option");
+				if (!result) 
+				{
+					_logger.LogInformation("Failed to create product option");
+					return Result<Unit>.Failure("Failed to create product option"); 
+				}
 
+				_logger.LogInformation("Adding a new product option - Success");
 				return Result<Unit>.Success(Unit.Value);
 			}
 		}

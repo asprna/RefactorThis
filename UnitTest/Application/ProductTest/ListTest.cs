@@ -16,11 +16,11 @@ namespace UnitTest.Application.ProductTest
 	{
 		private readonly List.Handler sut;
 		private readonly Mock<ILogger<MockDb>> _logger = new Mock<ILogger<MockDb>>();
-
+		private readonly Mock<ILogger<List.Handler>> _loggerHandler = new Mock<ILogger<List.Handler>>();
 		public ListTest()
 		{
 			var mockDb = new MockDb(_logger.Object);
-			sut = new List.Handler(mockDb.GetTestDbContext());
+			sut = new List.Handler(mockDb.GetTestDbContext(), _loggerHandler.Object);
 		}
 
 		/// <summary>

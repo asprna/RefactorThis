@@ -1,6 +1,7 @@
 ﻿using Application.Helper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Persistence;
 using System;
 using System.Threading;
@@ -21,33 +22,38 @@ namespace Application.Products
 		public class Handler : IRequestHandler<Command, Result<Unit>>
 		{
 			private readonly DataContext _context;
+			private readonly ILogger<Handler> _logger;
 
-			public Handler(DataContext context)
+			public Handler(DataContext context, ILogger<Handler> logger)
 			{
 				_context = context;
+				_logger = logger;
 			}
 
 			public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
 			{
-				//Find the product
+				_logger.LogInformation("Find the correct product by its product ID");
 				var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.Id);
 
 				if (product == null)
 				{
+					_logger.LogInformation("Product not found");
 					return null;
 				}
 
-				//Remove the product from the data context
+				_logger.LogInformation("Removing the product from the datacontext");
 				_context.Remove(product);
 
-				//Save changes to DB
+				_logger.LogInformation("Saving changes to DB");
 				var result = await _context.SaveChangesAsync() > 0;
 
 				if (!result)
 				{
+					_logger.LogInformation("Unable to delete the product");
 					return Result<Unit>.Failure("Failed to delete the product");
 				}
 
+				_logger.LogInformation("Product deletion - Success");
 				return Result<Unit>.Success(Unit.Value);
 			}
 		}

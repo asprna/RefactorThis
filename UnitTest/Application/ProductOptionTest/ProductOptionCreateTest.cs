@@ -17,11 +17,12 @@ namespace UnitTest.Application.ProductOptionTest
 	{
 		private readonly ProductOptionCreate.Handler sut;
 		private readonly Mock<ILogger<MockDb>> _logger = new Mock<ILogger<MockDb>>();
+		private readonly Mock<ILogger<ProductOptionCreate.Handler>> _loggerHandler = new Mock<ILogger<ProductOptionCreate.Handler>>();
 
 		public ProductOptionCreateTest()
 		{
 			var mockDb = new MockDb(_logger.Object);
-			sut = new ProductOptionCreate.Handler(mockDb.GetTestDbContext());
+			sut = new ProductOptionCreate.Handler(mockDb.GetTestDbContext(), _loggerHandler.Object);
 		}
 
 		/// <summary>

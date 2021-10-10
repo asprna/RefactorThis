@@ -2,6 +2,7 @@
 using Domain;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Persistence;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,22 +30,29 @@ namespace Application.Products
 		public class Handler : IRequestHandler<Command, Result<Unit>>
 		{
 			private readonly DataContext _context;
+			private readonly ILogger<Handler> _logger;
 
-			public Handler(DataContext context)
+			public Handler(DataContext context, ILogger<Handler> logger)
 			{
 				_context = context;
+				_logger = logger;
 			}
 
 			public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
 			{
-				//Add the new product
+				_logger.LogInformation("Adding a new product");
 				_context.Products.Add(request.Product);
 
-				//Save changes to DB
+				_logger.LogInformation("Saving DB changes");
 				var result = await _context.SaveChangesAsync() > 0;
 
-				if (!result) return Result<Unit>.Failure("Failed to create product");
+				if (!result)
+				{
+					_logger.LogInformation("Unable to save changes to DB");
+					return Result<Unit>.Failure("Failed to create product");
+				}
 
+				_logger.LogInformation("Create a new product - Success");
 				return Result<Unit>.Success(Unit.Value);
 			}
 		}

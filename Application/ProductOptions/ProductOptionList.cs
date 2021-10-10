@@ -4,6 +4,7 @@ using AutoMapper;
 using Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Persistence;
 using System;
 using System.Collections.Generic;
@@ -28,27 +29,30 @@ namespace Application.ProductOptions
 		{
 			private readonly DataContext _context;
 			private readonly IMapper _mapper;
+			private readonly ILogger<Handler> _logger;
 
-			public Handler(DataContext context, IMapper mapper)
+			public Handler(DataContext context, IMapper mapper, ILogger<Handler> logger)
 			{
 				_context = context;
 				_mapper = mapper;
+				_logger = logger;
 			}
 
 			public async Task<Result<Domain.ProductOptionsDTO>> Handle(Query request, CancellationToken cancellationToken)
 			{
-				//Find the product
+				_logger.LogInformation("Checking if the product exists");
 				var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == request.ProductID);
 
 				if (product == null)
 				{
+					_logger.LogInformation("Unable to find the product");
 					return null;
 				}
 
-				//Find the product options for the given product
+				_logger.LogInformation("Checking if the product option exists for the given product id");
 				var options = await _context.ProductOptions.Where(p => p.ProductId == request.ProductID).ToListAsync();
 
-				//Map Product Option to Product option DTO
+				_logger.LogInformation("Mapping the product option in the request to Product option n the DB");
 				List<ProductOptionDTO> productOptionDTOs = _mapper.Map<List<ProductOption>, List<ProductOptionDTO>>(options);
 
 				var productOptions = new Domain.ProductOptionsDTO
@@ -56,6 +60,7 @@ namespace Application.ProductOptions
 					Items = productOptionDTOs
 				};
 
+				_logger.LogInformation("Getting the product option - Success");
 				return Result<Domain.ProductOptionsDTO>.Success(productOptions);
 			}
 		}
